@@ -1,0 +1,232 @@
+# Organization-wide Label Taxonomy
+# This file defines a standardized set of labels to be used across all NORSAIN-AI repositories
+# Use this for consistency in issue and PR management
+
+# Type Labels - What kind of change is this?
+- name: bug
+  color: d73a4a
+  description: Something isn't working correctly
+
+- name: enhancement
+  color: a2eeef
+  description: New feature or request
+
+- name: documentation
+  color: 0075ca
+  description: Improvements or additions to documentation
+
+- name: question
+  color: d876e3
+  description: Further information is requested
+
+- name: dependencies
+  color: 0366d6
+  description: Updates to dependencies
+
+- name: ci-cd
+  color: 1d76db
+  description: CI/CD and automation changes
+
+- name: security
+  color: ee0701
+  description: Security-related issues or improvements
+
+- name: performance
+  color: f9d0c4
+  description: Performance improvements
+
+- name: refactor
+  color: fbca04
+  description: Code refactoring without changing functionality
+
+- name: testing
+  color: c5def5
+  description: Testing improvements or additions
+
+# Priority Labels - How urgent is this?
+- name: priority:critical
+  color: b60205
+  description: Critical priority - needs immediate attention
+
+- name: priority:high
+  color: d93f0b
+  description: High priority - should be addressed soon
+
+- name: priority:medium
+  color: fbca04
+  description: Medium priority - normal queue
+
+- name: priority:low
+  color: 0e8a16
+  description: Low priority - nice to have
+
+# Status Labels - What's the current state?
+- name: status:triage
+  color: ededed
+  description: Needs triage and prioritization
+
+- name: status:in-progress
+  color: yellow
+  description: Currently being worked on
+
+- name: status:blocked
+  color: d73a4a
+  description: Blocked by another issue or external factor
+
+- name: status:on-hold
+  color: fef2c0
+  description: On hold for now
+
+- name: status:needs-review
+  color: 0e8a16
+  description: Ready for review
+
+- name: status:needs-testing
+  color: 1d76db
+  description: Needs testing before merge
+
+- name: status:awaiting-response
+  color: fef2c0
+  description: Waiting for response from author/contributor
+
+# Size Labels - Complexity estimate
+- name: size:xs
+  color: c2e0c6
+  description: Extra small change (< 10 lines)
+
+- name: size:s
+  color: 7ae6c7
+  description: Small change (10-50 lines)
+
+- name: size:m
+  color: 3eb991
+  description: Medium change (50-200 lines)
+
+- name: size:l
+  color: 2a7c5f
+  description: Large change (200-500 lines)
+
+- name: size:xl
+  color: 1a4d3a
+  description: Extra large change (> 500 lines)
+
+# Resolution Labels - How was this resolved?
+- name: wontfix
+  color: ffffff
+  description: This will not be worked on
+
+- name: duplicate
+  color: cfd3d7
+  description: This issue or pull request already exists
+
+- name: invalid
+  color: e4e669
+  description: This doesn't seem right
+
+- name: works-as-designed
+  color: ffffff
+  description: This is working as intended
+
+# Special Labels
+- name: good first issue
+  color: 7057ff
+  description: Good for newcomers
+
+- name: help wanted
+  color: 008672
+  description: Extra attention is needed
+
+- name: breaking-change
+  color: d93f0b
+  description: Introduces breaking changes
+
+- name: needs-milestone
+  color: fbca04
+  description: Needs a milestone assigned
+
+- name: stale
+  color: eeeeee
+  description: No activity for extended period
+
+- name: pinned
+  color: 0e8a16
+  description: Important - should not be auto-closed
+
+- name: roadmap
+  color: 3e4b9e
+  description: Part of the project roadmap
+
+- name: work-in-progress
+  color: f9d0c4
+  description: Work in progress - not ready for review
+
+# Area Labels - Which part of the project?
+- name: area:api
+  color: 0052cc
+  description: API-related changes
+
+- name: area:ui
+  color: 5319e7
+  description: User interface changes
+
+- name: area:backend
+  color: 006b75
+  description: Backend/server-side changes
+
+- name: area:frontend
+  color: 1d76db
+  description: Frontend/client-side changes
+
+- name: area:database
+  color: 0e8a16
+  description: Database-related changes
+
+- name: area:infrastructure
+  color: 0366d6
+  description: Infrastructure and deployment
+
+- name: area:tooling
+  color: fbca04
+  description: Development tools and tooling
+
+# Platform Labels
+- name: platform:web
+  color: 1d76db
+  description: Web platform
+
+- name: platform:mobile
+  color: 5319e7
+  description: Mobile platforms
+
+- name: platform:desktop
+  color: 0052cc
+  description: Desktop platforms
+
+- name: platform:cloud
+  color: 0e8a16
+  description: Cloud platforms
+
+# Language Labels
+- name: lang:javascript
+  color: f1e05a
+  description: JavaScript code
+
+- name: lang:typescript
+  color: 2b7489
+  description: TypeScript code
+
+- name: lang:python
+  color: 3572a5
+  description: Python code
+
+- name: lang:go
+  color: 00add8
+  description: Go code
+
+- name: lang:java
+  color: b07219
+  description: Java code
+
+- name: lang:rust
+  color: dea584
+  description: Rust code

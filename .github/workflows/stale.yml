@@ -1,0 +1,66 @@
+name: Close Stale Issues and PRs
+
+on:
+  schedule:
+    # Run daily at 1:00 AM UTC
+    - cron: '0 1 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          # General settings
+          days-before-stale: 60
+          days-before-close: 14
+          
+          # Stale issue settings
+          stale-issue-message: |
+            This issue has been automatically marked as stale because it has not had any activity for 60 days.
+            It will be closed in 14 days if no further activity occurs.
+            
+            If this issue is still relevant, please comment to keep it open.
+            Thank you for your contributions! 🙏
+          close-issue-message: |
+            This issue was automatically closed because it has been stale for 14 days with no activity.
+            
+            If you believe this issue should be reopened, please create a new issue and reference this one.
+          stale-issue-label: 'stale'
+          
+          # Stale PR settings
+          stale-pr-message: |
+            This pull request has been automatically marked as stale because it has not had any activity for 60 days.
+            It will be closed in 14 days if no further activity occurs.
+            
+            If this PR is still relevant, please comment or push new commits to keep it open.
+            Thank you for your contributions! 🙏
+          close-pr-message: |
+            This pull request was automatically closed because it has been stale for 14 days with no activity.
+            
+            If you'd like to continue work on this PR, please reopen it or create a new one.
+          stale-pr-label: 'stale'
+          
+          # Exempt labels (issues/PRs with these labels will never be marked stale)
+          exempt-issue-labels: 'pinned,security,roadmap,in-progress'
+          exempt-pr-labels: 'pinned,security,in-progress,work-in-progress'
+          
+          # Exempt milestones
+          exempt-all-milestones: true
+          
+          # Exempt assignees
+          exempt-assignees: true
+          
+          # Operations per run (to avoid rate limiting)
+          operations-per-run: 100
+          
+          # Remove stale label when updated
+          remove-stale-when-updated: true
+          
+          # Ascending order to process oldest first
+          ascending: true
