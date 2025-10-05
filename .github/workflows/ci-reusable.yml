@@ -1,0 +1,42 @@
+name: Reusable CI Workflow
+
+on:
+  workflow_call:
+    inputs:
+      check-milestone:
+        description: 'Check if PR has a milestone'
+        required: false
+        type: boolean
+        default: true
+      check-labels:
+        description: 'Check if PR has labels'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  pr-validation:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Check PR has milestone
+        if: inputs.check-milestone
+        run: |
+          if [ "${{ github.event.pull_request.milestone }}" == "" ]; then
+            echo "❌ PR must have a milestone assigned"
+            exit 1
+          else
+            echo "✅ PR has milestone: ${{ github.event.pull_request.milestone.title }}"
+          fi
+
+      - name: Check PR has labels
+        if: inputs.check-labels
+        run: |
+          LABEL_COUNT=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq '. | length')
+          if [ "$LABEL_COUNT" -eq 0 ]; then
+            echo "❌ PR must have at least one label"
+            exit 1
+          else
+            echo "✅ PR has $LABEL_COUNT label(s)"
+          fi
