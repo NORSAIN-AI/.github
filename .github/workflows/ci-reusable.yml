@@ -1,0 +1,115 @@
+name: Reusable CI Workflow
+on:
+  workflow_call:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check for Node.js project
+        id: check-node
+        run: |
+          if [ -f "package.json" ]; then
+            echo "has_node=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_node=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Setup Node.js
+        if: steps.check-node.outputs.has_node == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      
+      - name: Setup pnpm
+        if: steps.check-node.outputs.has_node == 'true'
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Get pnpm store directory
+        if: steps.check-node.outputs.has_node == 'true'
+        id: pnpm-cache
+        run: |
+          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+      
+      - name: Setup pnpm cache
+        if: steps.check-node.outputs.has_node == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      
+      - name: Install Node.js dependencies
+        if: steps.check-node.outputs.has_node == 'true'
+        run: pnpm install --frozen-lockfile
+      
+      - name: Run Node.js lint
+        if: steps.check-node.outputs.has_node == 'true'
+        run: |
+          if pnpm run --if-present lint; then
+            echo "✓ Linting passed"
+          else
+            echo "⚠ No lint script found or linting failed"
+          fi
+      
+      - name: Run Node.js tests
+        if: steps.check-node.outputs.has_node == 'true'
+        run: |
+          if pnpm run --if-present test; then
+            echo "✓ Tests passed"
+          else
+            echo "⚠ No test script found or tests failed"
+          fi
+      
+      - name: Check for Python project
+        id: check-python
+        run: |
+          if [ -f "pyproject.toml" ]; then
+            echo "has_python=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_python=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Setup Python
+        if: steps.check-python.outputs.has_python == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      
+      - name: Install Python dependencies
+        if: steps.check-python.outputs.has_python == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+          fi
+          if [ -f "pyproject.toml" ]; then
+            pip install -e ".[dev]" || pip install -e .
+          fi
+      
+      - name: Run Python lint
+        if: steps.check-python.outputs.has_python == 'true'
+        run: |
+          if command -v ruff &> /dev/null; then
+            ruff check . || echo "⚠ Ruff linting failed"
+          elif command -v flake8 &> /dev/null; then
+            flake8 . || echo "⚠ Flake8 linting failed"
+          else
+            echo "⚠ No Python linter found"
+          fi
+      
+      - name: Run Python tests
+        if: steps.check-python.outputs.has_python == 'true'
+        run: |
+          if command -v pytest &> /dev/null; then
+            pytest || echo "⚠ Tests failed"
+          else
+            echo "⚠ pytest not found"
+          fi

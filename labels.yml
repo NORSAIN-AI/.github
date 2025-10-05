@@ -1,0 +1,52 @@
+# Label Taxonomy
+# This file defines the standard labels used across NORSAIN-AI repositories
+# Use with https://github.com/marketplace/actions/github-labeler
+
+labels:
+  # Type labels
+  - name: bug
+    color: d73a4a
+    description: Something isn't working
+  
+  - name: feature
+    color: 0e8a16
+    description: New feature or request
+  
+  - name: documentation
+    color: 0075ca
+    description: Improvements or additions to documentation
+  
+  - name: tech-debt
+    color: f9d0c4
+    description: Technical debt and refactoring
+  
+  # Priority labels
+  - name: "priority: high"
+    color: b60205
+    description: High priority - requires immediate attention
+  
+  - name: "priority: medium"
+    color: fbca04
+    description: Medium priority - should be addressed soon
+  
+  - name: "priority: low"
+    color: 0e8a16
+    description: Low priority - nice to have
+  
+  # Status labels
+  - name: "status: in-progress"
+    color: c2e0c6
+    description: Work is actively being done
+  
+  - name: "status: blocked"
+    color: d93f0b
+    description: Work is blocked by dependencies
+  
+  - name: "status: ready-for-review"
+    color: 1d76db
+    description: Ready for review
+  
+  # Breaking change label
+  - name: "type: breaking"
+    color: d93f0b
+    description: Breaking change that requires major version bump

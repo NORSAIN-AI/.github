@@ -1,0 +1,16 @@
+# Labeler configuration for automated PR labeling
+# See: https://github.com/actions/labeler
+
+feature:
+  - changed-files:
+    - any-glob-to-any-file: 
+      - 'src/**/*'
+      - '!src/**/*.test.*'
+      - '!src/**/*.spec.*'
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'docs/**/*'
+      - 'README.md'
+      - '*.md'

@@ -1,0 +1,38 @@
+name: Feature Request
+description: Propose a new feature or enhancement
+labels: ["feature", "priority: medium"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please provide details below.
+  
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal and Value
+      description: What is the goal of this feature and what value does it provide?
+      placeholder: Describe the goal and value proposition
+    validations:
+      required: true
+  
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What is the scope of this feature? What is included and what is not?
+      placeholder: Define the scope and boundaries
+    validations:
+      required: true
+  
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What are the acceptance criteria for this feature?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true

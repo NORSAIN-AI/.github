@@ -1,0 +1,19 @@
+name: Enforce Milestone
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  enforce-milestone:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check milestone
+        run: |
+          MILESTONE="${{ github.event.pull_request.milestone }}"
+          if [ -z "$MILESTONE" ] || [ "$MILESTONE" == "null" ]; then
+            echo "❌ ERROR: Pull request must be assigned to a milestone"
+            echo "Please assign this PR to a milestone before merging."
+            exit 1
+          else
+            echo "✓ Pull request is assigned to milestone: ${{ github.event.pull_request.milestone.title }}"
+          fi

@@ -1,0 +1,18 @@
+# CODEOWNERS
+# This file defines individuals or teams responsible for code in this repository.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Platform team owns core infrastructure and configuration
+/.github/ @NORSAIN-AI/platform-team
+/profile/ @NORSAIN-AI/platform-team
+
+# Infrastructure team owns CI/CD workflows
+/.github/workflows/ @NORSAIN-AI/infra-team
+
+# Documentation owned by platform team
+*.md @NORSAIN-AI/platform-team
+CONTRIBUTING.md @NORSAIN-AI/platform-team
+SECURITY.md @NORSAIN-AI/platform-team
+
+# Fallback: All other files default to platform team
+* @NORSAIN-AI/platform-team
