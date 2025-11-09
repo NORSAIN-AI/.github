@@ -1,0 +1,10 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled, milestoned, demilestoned]
+
+jobs:
+  validate-pr:
+    name: Validate PR Requirements
+    uses: NORSAIN-AI/.github/.github/workflows/ci-reusable.yml@main
