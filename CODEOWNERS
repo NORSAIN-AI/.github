@@ -1,0 +1,33 @@
+# Code Owners
+# This file defines individuals or teams responsible for code in this repository
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owners - responsible for everything unless a more specific rule applies
+* @NORSAIN-AI/core-team
+
+# GitHub workflows and CI/CD
+/.github/ @NORSAIN-AI/devops-team
+
+# Security policies and workflows
+/SECURITY.md @NORSAIN-AI/security-team
+/.github/workflows/codeql.yml @NORSAIN-AI/security-team
+/.github/workflows/container-scan.yml @NORSAIN-AI/security-team
+
+# Documentation
+*.md @NORSAIN-AI/documentation-team
+/docs/ @NORSAIN-AI/documentation-team
+
+# Dependency files
+package.json @NORSAIN-AI/core-team
+package-lock.json @NORSAIN-AI/core-team
+requirements.txt @NORSAIN-AI/core-team
+go.mod @NORSAIN-AI/core-team
+go.sum @NORSAIN-AI/core-team
+Gemfile @NORSAIN-AI/core-team
+Gemfile.lock @NORSAIN-AI/core-team
+
+# Configuration files
+*.yml @NORSAIN-AI/devops-team
+*.yaml @NORSAIN-AI/devops-team
+*.json @NORSAIN-AI/core-team
+*.toml @NORSAIN-AI/core-team

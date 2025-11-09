@@ -1,8 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 Discussion Forum
+  - name: 💬 Discussions
     url: https://github.com/orgs/NORSAIN-AI/discussions
     about: Ask questions and discuss ideas with the community
-  - name: 📚 Documentation
+  - name: 📖 Documentation
     url: https://github.com/NORSAIN-AI
-    about: Check the documentation for help and guides
+    about: View the official documentation
+  - name: 🔒 Security Issue
+    url: https://github.com/NORSAIN-AI/.github/security/advisories/new
+    about: Report a security vulnerability privately
