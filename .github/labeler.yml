@@ -1,34 +1,16 @@
-# Automatically label PRs based on changed files
+# Labeler configuration for automated PR labeling
 # See: https://github.com/actions/labeler
+
+feature:
+  - changed-files:
+    - any-glob-to-any-file: 
+      - 'src/**/*'
+      - '!src/**/*.test.*'
+      - '!src/**/*.spec.*'
 
 documentation:
   - changed-files:
-    - any-glob-to-any-file: ['**/*.md', 'docs/**/*']
-
-dependencies:
-  - changed-files:
-    - any-glob-to-any-file: ['package.json', 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'Gemfile', 'Gemfile.lock', 'requirements.txt', 'Pipfile', 'Pipfile.lock', 'go.mod', 'go.sum']
-
-ci-cd:
-  - changed-files:
-    - any-glob-to-any-file: ['.github/workflows/**', '.gitlab-ci.yml', 'Jenkinsfile', '.circleci/**', '.travis.yml']
-
-docker:
-  - changed-files:
-    - any-glob-to-any-file: ['**/Dockerfile*', 'docker-compose*.yml', '.dockerignore']
-
-github-actions:
-  - changed-files:
-    - any-glob-to-any-file: ['.github/workflows/**', '.github/actions/**']
-
-security:
-  - changed-files:
-    - any-glob-to-any-file: ['SECURITY.md', '.github/workflows/codeql.yml', '.github/workflows/container-scan.yml']
-
-configuration:
-  - changed-files:
-    - any-glob-to-any-file: ['**/*.yml', '**/*.yaml', '**/*.json', '**/*.toml', '**/*.ini', '**/*.conf', '**/*.config']
-
-testing:
-  - changed-files:
-    - any-glob-to-any-file: ['**/*test*', '**/*spec*', 'tests/**', 'test/**', '__tests__/**']
+    - any-glob-to-any-file:
+      - 'docs/**/*'
+      - 'README.md'
+      - '*.md'

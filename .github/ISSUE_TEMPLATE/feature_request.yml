@@ -1,62 +1,38 @@
 name: Feature Request
-description: Suggest a new feature or enhancement
-title: "[Feature]: "
-labels: ["enhancement", "triage"]
+description: Propose a new feature or enhancement
+labels: ["feature", "priority: medium"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for suggesting a feature! Please fill out the form below.
-
+        Thanks for suggesting a feature! Please provide details below.
+  
   - type: textarea
-    id: problem
+    id: goal
     attributes:
-      label: Problem Statement
-      description: Is your feature request related to a problem? Please describe.
-      placeholder: I'm frustrated when...
+      label: Goal and Value
+      description: What is the goal of this feature and what value does it provide?
+      placeholder: Describe the goal and value proposition
     validations:
       required: true
-
+  
   - type: textarea
-    id: solution
+    id: scope
     attributes:
-      label: Proposed Solution
-      description: Describe the solution you'd like to see
-      placeholder: I would like to...
+      label: Scope
+      description: What is the scope of this feature? What is included and what is not?
+      placeholder: Define the scope and boundaries
     validations:
       required: true
-
+  
   - type: textarea
-    id: alternatives
+    id: acceptance
     attributes:
-      label: Alternatives Considered
-      description: Describe any alternative solutions or features you've considered
-      placeholder: I also thought about...
+      label: Acceptance Criteria
+      description: What are the acceptance criteria for this feature?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
     validations:
-      required: false
-
-  - type: textarea
-    id: benefits
-    attributes:
-      label: Benefits
-      description: What are the benefits of this feature?
-      placeholder: This would help by...
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional
-    attributes:
-      label: Additional Context
-      description: Add any other context, screenshots, or examples about the feature request
-    validations:
-      required: false
-
-  - type: checkboxes
-    id: contribution
-    attributes:
-      label: Contribution
-      description: Would you be willing to contribute this feature?
-      options:
-        - label: I am willing to submit a pull request for this feature
-          required: false
+      required: true

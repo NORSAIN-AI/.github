@@ -1,111 +1,34 @@
 name: Container Security Scan
-
 on:
   push:
-    branches: [ "main", "develop" ]
-    paths:
-      - '**/Dockerfile*'
-      - '**/docker-compose*.yml'
-      - '.github/workflows/container-scan.yml'
+    branches: [ main, develop ]
   pull_request:
-    branches: [ "main", "develop" ]
-    paths:
-      - '**/Dockerfile*'
-      - '**/docker-compose*.yml'
+    branches: [ main ]
   schedule:
-    # Run weekly on Sundays at 2:00 AM UTC
-    - cron: '0 2 * * 0'
-  workflow_dispatch:
+    - cron: '0 8 * * 1'  # Run weekly on Mondays at 8 AM UTC
 
 permissions:
   contents: read
   security-events: write
-  packages: read
 
 jobs:
-  scan-dockerfile:
-    name: Scan Dockerfile with Trivy
+  scan:
+    name: Trivy Security Scan
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Find Dockerfiles
-        id: find-dockerfiles
-        run: |
-          # Find all Dockerfiles in the repository
-          DOCKERFILES=$(find . -name "Dockerfile*" -type f | tr '\n' ' ')
-          echo "dockerfiles=$DOCKERFILES" >> $GITHUB_OUTPUT
-          echo "Found Dockerfiles: $DOCKERFILES"
-
-      - name: Run Trivy vulnerability scanner
+      
+      - name: Run Trivy vulnerability scanner in fs mode
         uses: aquasecurity/trivy-action@master
-        if: steps.find-dockerfiles.outputs.dockerfiles != ''
         with:
-          scan-type: 'config'
+          scan-type: 'fs'
           scan-ref: '.'
+          severity: 'HIGH,CRITICAL'
           format: 'sarif'
           output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH,MEDIUM'
-          exit-code: '0'
-
-      - name: Upload Trivy results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: steps.find-dockerfiles.outputs.dockerfiles != ''
-        with:
-          sarif_file: 'trivy-results.sarif'
-          category: 'trivy-config'
-
-  scan-image:
-    name: Scan Container Image
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    
-    strategy:
-      matrix:
-        # Add your container images here
-        image:
-          # - 'ghcr.io/norsain-ai/example:latest'
-          - 'ubuntu:latest'  # Example - replace with actual images
-    
-    steps:
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ matrix.image }}
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '0'
-
-      - name: Upload Trivy results to GitHub Security tab
+      
+      - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
-          category: 'trivy-image-${{ matrix.image }}'
-
-  scan-fs:
-    name: Filesystem Scan with Grype
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run Grype vulnerability scanner
-        uses: anchore/scan-action@v3
-        id: grype
-        with:
-          path: "."
-          fail-build: false
-          severity-cutoff: high
-          output-format: sarif
-
-      - name: Upload Grype results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: ${{ steps.grype.outputs.sarif }}
-          category: 'grype-filesystem'

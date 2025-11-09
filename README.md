@@ -1,290 +1,256 @@
 # .github
 
-**Standard policies, templates, and workflows for all NORSAIN-AI repositories**
+Standard policies, templates, and workflows for all NORSAIN-AI repositories — centralizing CI/CD, security, and contribution guidelines.
 
-This repository centralizes organization-wide GitHub configurations, reusable workflows, issue/PR templates, and community health files. It serves as the single source of truth for CI/CD, security policies, and contribution guidelines across all NORSAIN-AI projects.
+## 📋 Overview
 
-## 📋 Contents
+This repository contains organization-wide configuration files, issue templates, pull request templates, reusable workflows, and documentation that can be used across all NORSAIN-AI repositories.
 
-### Issue & PR Templates
+## 🗂️ Repository Structure
 
-- **Bug Report** (`.github/ISSUE_TEMPLATE/bug_report.yml`) - Structured form for reporting bugs
-- **Feature Request** (`.github/ISSUE_TEMPLATE/feature_request.yml`) - Template for suggesting new features
-- **Pull Request Template** (`.github/PULL_REQUEST_TEMPLATE.md`) - Standardized PR checklist
+```
+.github/
+├── .github/
+│   ├── ISSUE_TEMPLATE/          # Issue templates for bugs and features
+│   │   ├── bug_report.yml
+│   │   ├── feature_request.yml
+│   │   └── config.yml
+│   ├── workflows/               # Reusable GitHub Actions workflows
+│   │   ├── ci-reusable.yml
+│   │   ├── semantic-pr.yml
+│   │   ├── require-labels.yml
+│   │   ├── enforce-milestone.yml
+│   │   ├── release-please.yml
+│   │   ├── stale.yml
+│   │   ├── codeql.yml
+│   │   └── container-scan.yml
+│   ├── PULL_REQUEST_TEMPLATE.md # PR template with checklist
+│   ├── CODEOWNERS               # Code ownership definitions
+│   └── labeler.yml              # Automated PR labeling config
+├── profile/
+│   └── README.md                # Organization profile README
+├── CONTRIBUTING.md              # Contribution guidelines
+├── SECURITY.md                  # Security policy
+└── labels.yml                   # Label taxonomy
 
-### Reusable Workflows
+```
 
-Located in `.github/workflows/`, these workflows can be called from any repository:
+## 🚀 Using Templates in Your Repository
 
-#### 🔄 CI/CD Workflows
+### Issue Templates
 
-**`ci-reusable.yml`** - Reusable CI workflow supporting multiple languages
+Issue templates are automatically available in any NORSAIN-AI repository. Users will see them when creating a new issue.
 
-Example usage in your repository:
+### Pull Request Template
+
+The pull request template is automatically available when creating a PR in any NORSAIN-AI repository.
+
+### Labels
+
+To sync the standard label taxonomy to your repository, you can use the [GitHub Labeler Action](https://github.com/marketplace/actions/github-labeler) or manually create labels based on `labels.yml`.
+
+## 🔄 Using Reusable Workflows
+
+### CI Reusable Workflow
+
+The `ci-reusable.yml` workflow provides automatic linting and testing for Node.js and Python projects.
+
+**Create a workflow file** in your repository at `.github/workflows/ci.yml`:
 
 ```yaml
 name: CI
-
 on: [push, pull_request]
 
 jobs:
-  test:
+  ci:
     uses: NORSAIN-AI/.github/.github/workflows/ci-reusable.yml@main
-    with:
-      language: 'node'
-      node-version: '20'
-      build-command: 'npm run build'
-      test-command: 'npm test'
-      lint-command: 'npm run lint'
 ```
 
-Supported languages: `node`, `python`, `go`, `java`
+**What it does:**
+- Automatically detects Node.js projects (via `package.json`)
+- Sets up Node.js 22 with pnpm and caching
+- Runs `pnpm install`, `pnpm lint`, and `pnpm test`
+- Automatically detects Python projects (via `pyproject.toml`)
+- Sets up Python 3.12 with pip caching
+- Runs Python linting and tests
 
-**`release-please.yml`** - Automated release management
+### Semantic PR Workflow
 
-- Automatically creates release PRs based on conventional commits
-- Generates changelogs
-- Manages semantic versioning
-- Tags releases with major/minor versions
-
-#### 🔒 Security Workflows
-
-**`codeql.yml`** - Code security scanning
-
-- Runs CodeQL analysis on push/PR
-- Scans for security vulnerabilities
-- Supports multiple languages
-- Weekly scheduled scans
-
-**`container-scan.yml`** - Container security scanning
-
-- Scans Dockerfiles with Trivy
-- Scans container images with Trivy and Grype
-- Uploads results to GitHub Security tab
-- Runs on Dockerfile changes and weekly schedule
-
-#### ✅ Quality & Automation Workflows
-
-**`semantic-pr.yml`** - Enforce semantic PR titles
-
-- Validates PR titles follow conventional commit format
-- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`
-- Ensures consistency for automated releases
-
-**`require-labels.yml`** - Require labels on issues and PRs
-
-- Ensures all items have at least one label
-- Helps with organization and filtering
-- Adds helpful comments when labels are missing
-
-**`enforce-milestone.yml`** - Enforce milestone assignment
-
-- Requires milestones on PRs and issues
-- Can be bypassed with `no-milestone` label
-- Helps with release planning
-
-**`stale.yml`** - Close stale issues and PRs
-
-- Marks inactive items as stale after 60 days
-- Closes stale items after 14 additional days
-- Respects exempt labels: `pinned`, `security`, `roadmap`
-- Respects assigned milestones and assignees
-
-### Configuration Files
-
-- **`labeler.yml`** - Automatic PR labeling based on changed files
-- **`labels.yml`** - Organization-wide label taxonomy (standardized labels for all repos)
-
-### Community Health Files
-
-These files are automatically inherited by all repositories in the organization:
-
-- **`CODEOWNERS`** - Define code ownership and required reviewers
-- **`CONTRIBUTING.md`** - Contribution guidelines and development workflow
-- **`SECURITY.md`** - Security policy and vulnerability reporting process
-
-### Organization Profile
-
-- **`profile/README.md`** - Public organization profile displayed on GitHub
-
-## 🚀 Using Reusable Workflows
-
-### Basic CI/CD Example
+Enforces conventional commit format for PR titles.
 
 ```yaml
-# .github/workflows/ci.yml in your repository
-name: CI
+name: PR Checks
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
 
+jobs:
+  semantic-pr:
+    uses: NORSAIN-AI/.github/.github/workflows/semantic-pr.yml@main
+```
+
+### Require Labels Workflow
+
+Ensures PRs have required labels (type + priority).
+
+```yaml
+name: PR Checks
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+
+jobs:
+  require-labels:
+    uses: NORSAIN-AI/.github/.github/workflows/require-labels.yml@main
+```
+
+### Enforce Milestone Workflow
+
+Ensures PRs are assigned to a milestone.
+
+```yaml
+name: PR Checks
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  enforce-milestone:
+    uses: NORSAIN-AI/.github/.github/workflows/enforce-milestone.yml@main
+```
+
+### Release Please Workflow
+
+Automates releases and changelog generation.
+
+```yaml
+name: Release
 on:
   push:
-    branches: [main, develop]
+    branches:
+      - main
+
+jobs:
+  release-please:
+    uses: NORSAIN-AI/.github/.github/workflows/release-please.yml@main
+    permissions:
+      contents: write
+      pull-requests: write
+```
+
+### Stale Issues/PRs Workflow
+
+Automatically marks and closes stale issues and PRs.
+
+```yaml
+name: Stale
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  stale:
+    uses: NORSAIN-AI/.github/.github/workflows/stale.yml@main
+    permissions:
+      issues: write
+      pull-requests: write
+```
+
+### CodeQL Analysis Workflow
+
+Performs security code scanning.
+
+```yaml
+name: CodeQL
+on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
+  schedule:
+    - cron: '0 6 * * 1'
 
 jobs:
-  test:
-    uses: NORSAIN-AI/.github/.github/workflows/ci-reusable.yml@main
-    with:
-      language: 'python'
-      python-version: '3.11'
-      test-command: 'pytest'
-      lint-command: 'flake8'
-```
-
-### Advanced CI Example with Multiple Jobs
-
-```yaml
-name: CI
-
-on: [push, pull_request]
-
-jobs:
-  # Run tests
-  test:
-    uses: NORSAIN-AI/.github/.github/workflows/ci-reusable.yml@main
-    with:
-      language: 'node'
-      node-version: '20'
-      build-command: 'npm run build'
-      test-command: 'npm test'
-      lint-command: 'npm run lint'
-  
-  # Security scan
-  security:
+  codeql:
     uses: NORSAIN-AI/.github/.github/workflows/codeql.yml@main
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 ```
 
-### Language-Specific Examples
+### Container Security Scan Workflow
 
-#### Node.js / TypeScript
+Scans for vulnerabilities using Trivy.
 
 ```yaml
+name: Security Scan
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 8 * * 1'
+
 jobs:
-  ci:
-    uses: NORSAIN-AI/.github/.github/workflows/ci-reusable.yml@main
-    with:
-      language: 'node'
-      node-version: '20'
-      build-command: 'npm run build'
-      test-command: 'npm test'
-      lint-command: 'npm run lint'
+  trivy:
+    uses: NORSAIN-AI/.github/.github/workflows/container-scan.yml@main
+    permissions:
+      contents: read
+      security-events: write
 ```
 
-#### Python
+## 🏷️ Label System
 
-```yaml
-jobs:
-  ci:
-    uses: NORSAIN-AI/.github/.github/workflows/ci-reusable.yml@main
-    with:
-      language: 'python'
-      python-version: '3.11'
-      test-command: 'pytest --cov'
-      lint-command: 'black . --check && flake8'
-```
+Our repositories use a structured labeling system:
 
-#### Go
+### Type Labels
+- `bug` - Something isn't working
+- `feature` - New feature or request
+- `documentation` - Documentation improvements
+- `tech-debt` - Technical debt and refactoring
 
-```yaml
-jobs:
-  ci:
-    uses: NORSAIN-AI/.github/.github/workflows/ci-reusable.yml@main
-    with:
-      language: 'go'
-      go-version: '1.21'
-      build-command: 'go build ./...'
-      test-command: 'go test ./... -v'
-      lint-command: 'golangci-lint run'
-```
+### Priority Labels
+- `priority: high` - Critical issues requiring immediate attention
+- `priority: medium` - Important issues to address soon
+- `priority: low` - Nice-to-have improvements
 
-#### Java
+### Status Labels
+- `status: in-progress` - Work is actively being done
+- `status: blocked` - Work is blocked by dependencies
+- `status: ready-for-review` - Ready for review
 
-```yaml
-jobs:
-  ci:
-    uses: NORSAIN-AI/.github/.github/workflows/ci-reusable.yml@main
-    with:
-      language: 'java'
-      java-version: '17'
-      build-command: 'mvn clean install'
-      test-command: 'mvn test'
-```
+### Special Labels
+- `type: breaking` - Breaking changes requiring major version bump
 
-## 📦 Repository Setup
+## 📝 Contributing
 
-### For New Repositories
-
-1. **Automatic Inheritance**: Issue templates, PR templates, and community health files are automatically inherited by all org repositories
-
-2. **Add Workflows**: Copy relevant workflows from `.github/workflows/` or use reusable workflows
-
-3. **Configure CODEOWNERS**: Create a repository-specific `CODEOWNERS` file if needed
-
-4. **Apply Labels**: Use the label definitions from `labels.yml` for consistency
-
-### Applying Standard Labels
-
-To sync labels across repositories, you can use tools like:
-
-- [github-label-sync](https://github.com/Financial-Times/github-label-sync)
-- GitHub CLI with scripts
-- GitHub API
-
-Example with `github-label-sync`:
-
-```bash
-npm install -g github-label-sync
-github-label-sync --labels labels.yml NORSAIN-AI/your-repo
-```
-
-## 🔧 Customization
-
-### Overriding Templates
-
-To override organization templates in a specific repository:
-
-1. Create the same file path in your repository (e.g., `.github/ISSUE_TEMPLATE/bug_report.yml`)
-2. Your repository's version will take precedence over the organization default
-
-### Customizing Reusable Workflows
-
-You can customize reusable workflows by:
-
-1. Forking and modifying for specific needs
-2. Using workflow inputs to configure behavior
-3. Extending with additional jobs in your repository
-
-## 📖 Documentation
-
-- [GitHub Community Health Files](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file)
-- [Reusable Workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflows)
-- [Issue Templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests)
-- [Conventional Commits](https://www.conventionalcommits.org/)
-
-## 🤝 Contributing
-
-To propose changes to organization-wide templates and workflows:
-
-1. Fork this repository
-2. Create a feature branch
-3. Make your changes
-4. Open a pull request
-5. Request review from `@NORSAIN-AI/core-team`
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on:
+- Conventional Commits format
+- PR review process
+- How to use labels and milestones
+- Development workflow
 
 ## 🔒 Security
 
-Report security vulnerabilities following our [Security Policy](SECURITY.md).
+Please read our [SECURITY.md](SECURITY.md) for information on:
+- How to report security vulnerabilities
+- Supported versions
+- Security best practices
 
 ## 📄 License
 
 This repository is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## 🤝 Support
 
-Inspired by best practices from leading open-source organizations and GitHub's recommendations for maintaining healthy, secure, and collaborative projects.
+If you have questions or need help:
+- Open an issue in the relevant repository
+- Contact @NORSAIN-AI/platform-team
+- Check our documentation
 
 ---
 
-**Maintained by NORSAIN-AI** | [Organization Profile](https://github.com/NORSAIN-AI)
+**Made with ❤️ by NORSAIN-AI**

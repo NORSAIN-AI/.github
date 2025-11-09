@@ -1,22 +1,21 @@
 name: Bug Report
 description: Report a bug or unexpected behavior
-title: "[Bug]: "
-labels: ["bug", "triage"]
+labels: ["bug", "priority: medium"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug! Please fill out the form below.
-
+        Thanks for reporting a bug! Please provide details below.
+  
   - type: textarea
     id: description
     attributes:
-      label: Bug Description
-      description: A clear and concise description of what the bug is.
-      placeholder: Tell us what you see!
+      label: Description
+      description: A clear and concise description of the bug
+      placeholder: Describe the bug you encountered
     validations:
       required: true
-
+  
   - type: textarea
     id: reproduction
     attributes:
@@ -29,51 +28,34 @@ body:
         4. See error
     validations:
       required: true
-
+  
   - type: textarea
     id: expected
     attributes:
       label: Expected Behavior
-      description: What did you expect to happen?
-      placeholder: Tell us what you expected
+      description: What you expected to happen
+      placeholder: Describe what should have happened
     validations:
       required: true
-
+  
   - type: textarea
     id: actual
     attributes:
       label: Actual Behavior
-      description: What actually happened?
-      placeholder: Tell us what actually happened
+      description: What actually happened
+      placeholder: Describe what actually happened
     validations:
       required: true
-
-  - type: textarea
-    id: environment
+  
+  - type: dropdown
+    id: severity
     attributes:
-      label: Environment
-      description: |
-        Please provide relevant environment details
-      placeholder: |
-        - OS: [e.g. Ubuntu 22.04, macOS 14]
-        - Version: [e.g. v1.2.3]
-        - Browser: [if applicable]
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - Critical - System is unusable
+        - High - Major functionality broken
+        - Medium - Feature partially broken
+        - Low - Minor issue or cosmetic
     validations:
-      required: false
-
-  - type: textarea
-    id: logs
-    attributes:
-      label: Relevant Logs
-      description: Please paste any relevant logs or error messages
-      render: shell
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional
-    attributes:
-      label: Additional Context
-      description: Add any other context about the problem here
-    validations:
-      required: false
+      required: true
