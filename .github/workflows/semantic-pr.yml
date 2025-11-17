@@ -1,30 +1,48 @@
 name: Semantic PR
+
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
 
+permissions:
+  pull-requests: read
+
 jobs:
-  semantic-pr:
+  validate:
+    name: Validate PR Title
     runs-on: ubuntu-latest
     steps:
-      - name: Validate PR title
-        uses: amannn/action-semantic-pull-request@v5
+      - uses: amannn/action-semantic-pull-request@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          # Configure which types are allowed (remove what you don't want)
           types: |
             feat
             fix
             docs
+            style
             refactor
-            chore
-            test
             perf
+            test
             build
             ci
+            chore
+            revert
+          # Configure which scopes are allowed (leave empty to allow any scope)
+          # scopes: |
+          #   core
+          #   ui
+          #   api
           requireScope: false
-          subjectPattern: ^.{1,72}$
+          # Configure that a scope must be provided
+          # Subjects may not start with an uppercase character
+          subjectPattern: ^(?![A-Z]).+$
           subjectPatternError: |
             The subject "{subject}" found in the pull request title "{title}"
             didn't match the configured pattern. Please ensure that the subject
-            doesn't exceed 72 characters.
+            doesn't start with an uppercase character.
+          # Validate the issue reference format (optional)
+          # validateSingleCommit: true
+          # ignoreLabels: |
+          #   ignore-semantic-pr

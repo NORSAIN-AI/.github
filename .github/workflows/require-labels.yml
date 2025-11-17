@@ -1,35 +1,25 @@
 name: Require Labels
+
 on:
   pull_request:
     types: [opened, labeled, unlabeled, synchronize]
+  issues:
+    types: [opened, labeled, unlabeled]
+
+permissions:
+  issues: write
+  pull-requests: write
 
 jobs:
-  require-labels:
+  label-check:
+    name: Check Required Labels
     runs-on: ubuntu-latest
     steps:
-      - name: Check for required labels
-        uses: mheap/github-action-required-labels@v5
-        with:
-          mode: minimum
-          count: 2
-          labels: |
-            feature
-            bug
-            documentation
-            tech-debt
-          add_comment: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Check for priority label
+      - name: Check for at least one label
         uses: mheap/github-action-required-labels@v5
         with:
           mode: minimum
           count: 1
-          labels: |
-            priority: high
-            priority: medium
-            priority: low
+          labels: "bug, enhancement, documentation, dependencies, ci-cd, security, configuration, testing, wontfix, duplicate, invalid, question"
           add_comment: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          message: "This ${{ github.event_name == 'pull_request' && 'PR' || 'issue' }} requires at least one label to be added before it can be merged/processed."

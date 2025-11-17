@@ -1,19 +1,62 @@
 name: Enforce Milestone
+
 on:
   pull_request:
-    types: [opened, edited, synchronize, reopened]
+    types: [opened, edited, milestoned, demilestoned]
+  issues:
+    types: [opened, edited, milestoned, demilestoned]
+
+permissions:
+  issues: write
+  pull-requests: write
 
 jobs:
   enforce-milestone:
+    name: Check Milestone Assignment
     runs-on: ubuntu-latest
+    # Only run on certain labels or skip for specific labels
+    if: ${{ !contains(github.event.*.labels.*.name, 'no-milestone') }}
     steps:
-      - name: Check milestone
-        run: |
-          MILESTONE="${{ github.event.pull_request.milestone }}"
-          if [ -z "$MILESTONE" ] || [ "$MILESTONE" == "null" ]; then
-            echo "❌ ERROR: Pull request must be assigned to a milestone"
-            echo "Please assign this PR to a milestone before merging."
-            exit 1
-          else
-            echo "✓ Pull request is assigned to milestone: ${{ github.event.pull_request.milestone.title }}"
-          fi
+      - name: Verify milestone
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const item = context.payload.pull_request || context.payload.issue;
+            const itemType = context.payload.pull_request ? 'PR' : 'issue';
+            const itemNumber = item.number;
+            
+            if (!item.milestone) {
+              const message = `⚠️ This ${itemType} must have a milestone assigned before it can be merged/closed. Please assign an appropriate milestone.`;
+              
+              // Add a comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: itemNumber,
+                body: message
+              });
+              
+              // Set a label to indicate missing milestone
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: itemNumber,
+                labels: ['needs-milestone']
+              });
+              
+              core.setFailed(`${itemType} #${itemNumber} is missing a milestone`);
+            } else {
+              // Remove the needs-milestone label if present
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: itemNumber,
+                  name: 'needs-milestone'
+                });
+              } catch (error) {
+                // Label might not exist, ignore
+              }
+              
+              console.log(`✅ Milestone "${item.milestone.title}" is assigned`);
+            }
