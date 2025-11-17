@@ -1,24 +1,24 @@
-name: 🐛 Bug Report
+name: Bug Report
 description: Report a bug or unexpected behavior
 title: "[Bug]: "
-labels: ["bug", "needs-triage"]
+labels: ["bug", "triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for reporting a bug! Please fill out the information below to help us resolve the issue.
+        Thanks for taking the time to report a bug! Please fill out the form below.
 
   - type: textarea
     id: description
     attributes:
-      label: Description
+      label: Bug Description
       description: A clear and concise description of what the bug is.
-      placeholder: Describe the bug...
+      placeholder: Tell us what you see!
     validations:
       required: true
 
   - type: textarea
-    id: steps
+    id: reproduction
     attributes:
       label: Steps to Reproduce
       description: Steps to reproduce the behavior
@@ -34,8 +34,8 @@ body:
     id: expected
     attributes:
       label: Expected Behavior
-      description: What you expected to happen
-      placeholder: Describe what should happen...
+      description: What did you expect to happen?
+      placeholder: Tell us what you expected
     validations:
       required: true
 
@@ -43,8 +43,8 @@ body:
     id: actual
     attributes:
       label: Actual Behavior
-      description: What actually happened
-      placeholder: Describe what actually happened...
+      description: What actually happened?
+      placeholder: Tell us what actually happened
     validations:
       required: true
 
@@ -52,12 +52,12 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Relevant environment details
+      description: |
+        Please provide relevant environment details
       placeholder: |
-        - OS: [e.g. Ubuntu 22.04]
-        - Version: [e.g. 1.0.0]
+        - OS: [e.g. Ubuntu 22.04, macOS 14]
+        - Version: [e.g. v1.2.3]
         - Browser: [if applicable]
-      render: markdown
     validations:
       required: false
 
@@ -65,7 +65,7 @@ body:
     id: logs
     attributes:
       label: Relevant Logs
-      description: Add any relevant logs or error messages
+      description: Please paste any relevant logs or error messages
       render: shell
     validations:
       required: false
@@ -74,6 +74,6 @@ body:
     id: additional
     attributes:
       label: Additional Context
-      description: Add any other context about the problem
+      description: Add any other context about the problem here
     validations:
       required: false

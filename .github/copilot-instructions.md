@@ -1,23 +1,31 @@
-
-
+# ---
+mode: agent
+version: 1.1
+owner: norsain/platform
+visibility: public
+permissions:
+  commit: conditional
+  pull_request: conditional
+---
 # Copilot Instructions – NORSAIN-AI/.github
 
 **Formål:**
-Hjelp vedlikeholdere å forbedre dette org-nivå `.github`-repoet uten å skape støy i prosjektene som bruker det. Copilot skal foreslå små, sikre og begrunnede endringer – som **patch/diff** – aldri utføre git-handlinger.
+Gi Copilot klare rammer for hvordan den kan hjelpe vedlikeholdere å forbedre dette org-nivå `.github`-repoet.
+Copilot skal som standard foreslå **små, sikre og begrunnede endringer** (patch/diff), men kan utføre commits eller PR-er når det blir **eksplisitt bedt om** og er innenfor NORSAIN-policy.
 
 ---
 
 ## 1) Omfang (hva dette repoet er)
 
-Dette repoet inneholder **felles politikk og automasjon** for hele organisasjonen:
+Dette repoet inneholder **felles politikk og automasjon** for hele NORSAIN-organisasjonen:
 
-* Reusable workflows i `.github/workflows/` (f.eks. `ci-reusable.yml`)
-* PR-mal: `PULL_REQUEST_TEMPLATE.md`
-* Issue-maler: `.github/ISSUE_TEMPLATE/{bug_report.yml, feature_request.yml, config.yml}`
-* Bidragsregler: `CONTRIBUTING.md`
-* Offentlig README: `README.md` (policy/bruk)
-* **Ikke-forside** designnotater: `docs/README-DESIGN.md`
-* Lisens: `LICENSE`
+- Reusable workflows i `.github/workflows/` (f.eks. `ci-reusable.yml`)
+- PR-mal: `PULL_REQUEST_TEMPLATE.md`
+- Issue-maler: `.github/ISSUE_TEMPLATE/{bug_report.yml, feature_request.yml, config.yml}`
+- Bidragsregler: `CONTRIBUTING.md`
+- Offentlig README: `README.md` (policy/bruk)
+- Designnotater: `docs/README-DESIGN.md` (ikke forside)
+- Lisens: `LICENSE`
 
 > Endringer her kan påvirke **alle repos** som refererer workflowene.
 
@@ -25,89 +33,92 @@ Dette repoet inneholder **felles politikk og automasjon** for hele organisasjone
 
 ## 2) Mål for Copilot
 
-* Foreslå **små, atomiske** forbedringer (≤ 5 endrede filer, ≤ 150 linjer totalt).
-* Gi **patch/diff** og en kort begrunnelse (*Hva* + *Hvorfor*).
-* Oppdage og rette **tvetydigheter** i maler og workflow-inputs.
-* Forbedre **lesbarhet, konsistens og sikkerhet** (least privilege, ingen hemmeligheter).
-* Holde dokumentasjon i **synk** (README, CONTRIBUTING, maler).
+- Foreslå **små, atomiske** forbedringer (≤ 5 filer, ≤ 150 linjer totalt)
+- Gi **patch/diff** og en kort begrunnelse (*Hva* + *Hvorfor*)
+- Oppdage og rette **tvetydigheter** i maler og workflow-inputs
+- Forbedre **lesbarhet, konsistens og sikkerhet** (least privilege, ingen hemmeligheter)
+- Holde dokumentasjon i **synk** (`README.md`, `CONTRIBUTING.md`, maler, docs)
 
-**Ikke-mål:** lage nye biblioteker, produktkode eller repo-spesifikke workflows for enkeltprosjekter (det hører hjemme i prosjekt-repoene).
-
----
-
-## 3) Absolutte begrensninger
-
-* ❌ **Aldri** opprett branches/commits/PR-er.
-  Lever kun **Unified diff** i tekst.
-* ❌ Ikke endre `LICENSE` (annet enn årstall ved behov, med begrunnelse).
-* ❌ Ikke introduser hemmeligheter/credentials eller be om brede GitHub-tillatelser.
-* ❌ Ikke fjern eksisterende validering (labels/milestone) uten klar grunn og mig-plan.
-* ❌ Ikke bryt bakoverkompatibilitet i reusable workflows uten semver-notat.
+**Ikke-mål:**
+- Lage nye biblioteker eller kode for produktprosjekter
+- Lage repo-spesifikke CI/CD-workflows (det skjer i prosjekt-repoene)
 
 ---
 
-## 4) Trygge oppgaver (go)
+## 3) Handlingsgrenser
 
-Copilot kan foreslå patch for:
-
-* **Workflows**: klarere navn, beskrivelser, input-validering, least-privilege `permissions`, tydeligere feil-beskjeder, logger.
-* **PR/Issue-maler**: bedre sjekklister, hjelpetekster, lenker til docs, konsekvent emoji/type-liste.
-* **README/CONTRIBUTING**: oppdatere eksempler, TOC, badges, kodeblokker, rettelser, tydeliggjøring av bruk.
-* **docs/README-DESIGN.md**: oppdatering ifm. README-endringer (synk-krav).
-* **Konsekvent stil**: YAML-folding/ankere (kun hvis det øker lesbarhet), trailing spaces, quote-bruk, osv.
+- 🚫 **Som standard:** Copilot skal ikke opprette branches, commits eller PR-er automatisk.
+  Den skal alltid levere **Unified diff** først.
+- ✅ **Unntak:** Når en menneskelig vedlikeholder eksplisitt ber om det
+  (f.eks. “Lag commit” eller “Åpne PR mot main”),
+  kan Copilot utføre handlingen, men:
+  - Endringen må være gjennomgått eller forklart først.
+  - PR må følge sjekklisten og naming conventions (`chore/`, `fix/`, `docs/` osv).
+- ❌ Ikke endre `LICENSE` (annet enn årstall ved behov, med begrunnelse).
+- ❌ Ikke introduser hemmeligheter eller be om brede GitHub-tillatelser.
+- ❌ Ikke fjern validering (labels/milestone) uten migrasjonsplan.
+- ❌ Ikke bryt bakoverkompatibilitet i reusable workflows uten semver-notat.
 
 ---
 
-## 5) Oppgaver som krever eksplisitt godkjenning (ask first)
+## 4) Trygge oppgaver (✅)
 
-* Endre **valideringslogikk** i `ci-reusable.yml` (f.eks. slå av/om labels/milestones)
-* Legge til **nye reusable workflows** som påvirker mange repos
-* Endre **standard permissions** (f.eks. fra `contents: read` til `write`)
-* Endre **PR-policy** (malens sjekkpunkter eller brudd på Conventional Commits)
-* Flytte/fjerne filer som påvirker **organisasjonens standard**.
+Copilot kan foreslå patcher for:
 
-> For slike endringer: foreslå *alternativer* og *risiko/mitigering* i patch-kommentaren.
+- **Workflows:** bedre navn, input-validering, minst mulig `permissions`, tydelige feilmeldinger og logger
+- **PR/Issue-maler:** mer presise sjekklister, hjelpetekster, lenker til docs, konsistente emojis
+- **README/CONTRIBUTING:** oppdatere eksempler, TOC, badges, tydeliggjøring av bruksinstruks
+- **docs/README-DESIGN.md:** synkronisering ved endringer i README
+- **Formattering:** YAML-anbefalinger, whitespace, konsistent quoting (uten funksjonelle endringer)
+
+---
+
+## 5) Oppgaver som krever eksplisitt godkjenning (⚠️)
+
+- Endre **valideringslogikk** i `ci-reusable.yml`
+- Legge til **nye reusable workflows** som påvirker mange repos
+- Endre **standard permissions** (f.eks. `contents: write`)
+- Endre **PR-policy** (malens krav, commit-regler, valideringspunkter)
+- Flytte/fjerne filer som påvirker **organisasjonsstandard**
+
+> For slike oppgaver: foreslå alternativer og dokumenter *risiko/mitigering* i kommentaren.
 
 ---
 
 ## 6) Filgrenser og konvensjoner
 
-* **Workflows (`.github/workflows/*.yml`)**
+### **Workflows (`.github/workflows/*.yml`)**
+- Bruk `permissions` **per jobb/steg** (least privilege)
+- Behold input-flaggene: `check-milestone`, `check-labels` med default `true`
+- Kommenter hvorfor en sjekk feiler (bruk `actions/github-script`)
+- Ikke bruk `pull_request_target` med skrive-tilgang uten sterk begrunnelse
 
-  * Bruk `permissions` **per jobb/steg** (least privilege).
-  * Hold på **input-flaggene**: `check-milestone`, `check-labels` m/ default `true`.
-  * Kommenter *hvorfor* en sjekk feiler (bruk `actions/github-script` for tydelig melding).
-  * Ikke bruk `pull_request_target` her med skrive-tilganger uten god grunn.
+### **PR-mal (`PULL_REQUEST_TEMPLATE.md`)**
+- Behold type-seksjon og sjekkliste
+- Krav om “Fixes #” eller “Relates to #”
+- Klare testpunkter
 
-* **PR-mal (`PULL_REQUEST_TEMPLATE.md`)**
+### **Issue-maler**
+- Behold auto-labels for triage
+- Unngå åpne tekstfelt uten veiledning
 
-  * Behold type-seksjonen og sjekklisten.
-  * Vær tydelig på **“Fixes #”** og testkrav.
+### **README.md**
+- Badges skal fungere for `main`
+- Quick-start må reflektere faktisk bruk av `ci-reusable.yml`
+- Ingen interne notater (bruk `docs/README-DESIGN.md`)
 
-* **Issue-maler**
-
-  * Hold auto-labels for **triage**.
-  * Unngå åpne tekstfelt uten veiledning (minimer støy).
-
-* **README.md**
-
-  * Topp-badges (CI, license) skal fungere for `main`.
-  * Quick-start må speile faktisk `ci-reusable.yml`-bruk.
-  * Ingen interne notater (de ligger i `docs/README-DESIGN.md`).
-
-* **docs/README-DESIGN.md**
-
-  * Oppdater når README endres; forklar *hvorfor*.
+### **docs/README-DESIGN.md**
+- Oppdater ved README-endringer
+- Forklar *hvorfor* endringen ble gjort
 
 ---
 
-## 7) Format på forslag (påkrevd)
+## 7) Format for forslag
 
 Når du foreslår endringer:
 
-1. **Kort begrunnelse** (2–5 setninger): *Hva* + *Hvorfor*.
-2. **Unified diff** per fil (riktige stier):
-
+1. **Kort begrunnelse (2–5 setninger):** Hva + Hvorfor
+2. **Unified diff** per fil, med riktige stier:
    ```diff
    diff --git a/.github/workflows/ci-reusable.yml b/.github/workflows/ci-reusable.yml
    --- a/.github/workflows/ci-reusable.yml
@@ -117,53 +128,77 @@ Når du foreslår endringer:
    -   contents: read
    + permissions:
    +   contents: read
-   +   checks: write  # trengs for å opprette sjekk-konklusjoner
+   +   checks: write  # nødvendig for å opprette sjekk-konklusjoner
    ```
-3. **Test/Verifikasjon**: Beskriv hvordan vedlikeholder kan verifisere (f.eks. åpne PR i sandbox-repo eller `workflow_dispatch` med inputs).
+
+3. **Test/verifikasjon:** Beskriv hvordan endringen kan valideres (PR, workflow_dispatch, test-branch)
 
 ---
 
 ## 8) Commit- og PR-policy (for mennesker)
 
-* **Conventional Commits** (type(scope): subject) – `ci(reusable): ...`, `docs(readme): ...`
-* Små PR-er (≤ 5 filer).
-* PR-beskrivelse: *Hva/ Hvorfor/ Risiko/ Hvordan teste*.
-* Knytt issues (`Fixes #123`) ved endringer som påvirker konsument-repos.
+* Følg **Conventional Commits**:
+  `ci(reusable): ...`, `docs(readme): ...`, `fix(template): ...`
+* Små PR-er (≤ 5 filer)
+* PR-beskrivelse må forklare:
+
+  * Hva endres
+  * Hvorfor
+  * Risiko
+  * Hvordan teste
+* Knytt issues med `Fixes #` eller `Relates to #`
 
 ---
 
 ## 9) Sikkerhet og personvern
 
-* Ingen hemmeligheter i repoet (bruk GitHub Secrets der prosjekter trenger det – **ikke** her).
-* Ikke be om tilganger utover behov; begrunn alle unntak.
-* Bruk klar feilmelding når sjekker feiler (ikke lekke metadata).
+* Ingen hemmeligheter i repoet (bruk GitHub Secrets i prosjekter, ikke her)
+* Ikke be om eller lagre tokens i kode
+* Alle permissions må være nødvendige og begrunnede
+* Klare feilmeldinger ved feil — aldri lek metadata eller konfidensiell info
 
 ---
 
-## 10) Eksempel-prompter (bruk disse formuleringene)
+## 10) Eksempel-prompter
 
-* «Foreslå *patch/diff* som gjør `ci-reusable.yml` mer robust ved å feile med tydelig melding når `check-labels: true` og PR mangler labels. Ingen git-kommandoer.»
-* «Lag *diff* som forbedrer `PULL_REQUEST_TEMPLATE.md`: legg til del for “Risiko/mitigering” og gjør sjekklisten tydeligere.»
-* «Oppdater `README.md` badges og Quick-start slik at lenker peker korrekt til `main`-workflow. Kun nødvendige linjer.»
-* «Synk `docs/README-DESIGN.md` med nye badge-valg; forklar hvorfor vi bruker `style=flat-square`.»
+* “Foreslå *patch/diff* som gjør `ci-reusable.yml` mer robust ved å feile tydelig når `check-labels: true` og PR mangler labels.”
+* “Lag patch som utvider `PULL_REQUEST_TEMPLATE.md` med del for Risiko/mitigering.”
+* “Oppdater `README.md` badges slik at de peker til `main`-workflow.”
+* “Synkroniser `docs/README-DESIGN.md` med endringer i README, og forklar hvorfor badge-stilen er flat-square.”
 
 ---
 
 ## 11) Hva Copilot skal **avvise**
 
-* Forslag som introduserer hemmeligheter, brede permissions, eller uklare endringer.
-* Forslag som endrer lisens eller fjerner krav i PR-validering uten sterk begrunnelse.
-* Store refaktoreringer uten gevinst for **alle** konsument-repos.
+* Forslag som introduserer hemmeligheter eller brede permissions
+* Forslag som fjerner sikkerhets-/valideringskrav uten migrasjonsnotat
+* Store refaktoreringer uten gevinst for alle konsument-repos
+* Endringer uten dokumentert hensikt eller testplan
 
 ---
 
 ## 12) Definisjon av ferdig (DoD)
 
-* Patch er **liten**, **tydelig** og **reproduserbar**.
-* README/Docs er oppdatert ved behov.
-* Endringen er **bakoverkompatibel** eller merket som **breaking** med migrasjonsnotat.
-* Verifikasjonstrinn er beskrevet.
+* Endringen er **liten, tydelig og reproduserbar**
+* README/Docs oppdatert der det er relevant
+* Ingen brudd på bakoverkompatibilitet uten versjonsnotat
+* Verifikasjonstrinn beskrevet i PR-beskrivelsen
 
 ---
 
-© NORSAIN-AI • Offentlig repo – trygg automasjon og governance.
+© 2025 NORSAIN-AI — Offentlig repo • trygg automasjon og Copilot governance
+
+```
+
+---
+
+### ✅ Hva som er nytt i denne versjonen
+| Endring | Forklaring |
+|----------|-------------|
+| **“Handlingsgrenser”** erstatter “Absolutte begrensninger” | Lar Copilot gjøre commits/PRs når du eksplisitt ber om det |
+| **Klarere tillatelsesnivåer** | Skiller mellom “default safe” og “explicit allowed” |
+| **Modernisert språk** | Passer for offentlig dokumentasjon (engasjerende men formelt) |
+| **Forbedret struktur** | Kortere seksjoner, lettere å scanne |
+| **Ikke-mål presisert** | Fjerner misforståelse om at Copilot ikke kan bidra til workflow-oppdateringer |
+
+--
