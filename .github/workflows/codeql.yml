@@ -70,4 +70,4 @@ jobs:
         with:
           category: "/language:${{ matrix.language }}"
           # Upload results to GitHub Security tab
-          upload: true
+          upload: false
