@@ -23,20 +23,34 @@ By participating in this project, you agree to abide by our Code of Conduct. Ple
 
 1. **Fork the repository** to your GitHub account
 2. **Clone your fork** to your local machine:
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/REPO-NAME.git
    cd REPO-NAME
    ```
+
 3. **Add upstream remote**:
+
    ```bash
    git remote add upstream https://github.com/NORSAIN-AI/REPO-NAME.git
    ```
+
 4. **Install dependencies** (varies by project):
+
    ```bash
    npm install  # for Node.js projects
    # or
    pip install -r requirements.txt  # for Python projects
    ```
+
+5. **Install pre-commit hooks** (recommended):
+
+   ```bash
+   pip install pre-commit
+   pre-commit install
+   ```
+
+   This will run automatic checks (linting, formatting) before each commit to ensure code quality.
 
 ## How to Contribute
 
@@ -55,6 +69,7 @@ We appreciate all types of contributions:
 ## Development Workflow
 
 1. **Create a new branch** for your changes:
+
    ```bash
    git checkout -b feat/your-feature-name
    # or
@@ -64,22 +79,26 @@ We appreciate all types of contributions:
 2. **Make your changes** following our coding standards
 
 3. **Test your changes**:
+
    ```bash
    npm test  # or appropriate test command
    ```
 
 4. **Commit your changes** using conventional commits:
+
    ```bash
    git commit -m "feat: add new feature"
    ```
 
 5. **Keep your branch up to date**:
+
    ```bash
    git fetch upstream
    git rebase upstream/main
    ```
 
 6. **Push to your fork**:
+
    ```bash
    git push origin feat/your-feature-name
    ```
@@ -100,18 +119,21 @@ We appreciate all types of contributions:
 ### Language-Specific Standards
 
 #### JavaScript/TypeScript
+
 - Use ESLint and Prettier configurations
 - Prefer `const` and `let` over `var`
 - Use async/await over callbacks
 - Write TypeScript types for all public APIs
 
 #### Python
+
 - Follow PEP 8 style guide
 - Use type hints where appropriate
 - Write docstrings for all public functions
 - Use `black` for code formatting
 
 #### Go
+
 - Follow effective Go guidelines
 - Use `gofmt` and `golint`
 - Write clear error messages
@@ -121,7 +143,7 @@ We appreciate all types of contributions:
 
 We use [Conventional Commits](https://www.conventionalcommits.org/) for clear and semantic commit messages:
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>

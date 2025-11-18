@@ -1,0 +1,51 @@
+extends: default
+
+rules:
+  # Allow longer lines for comments and strings
+  line-length:
+    max: 120
+    level: warning
+
+  # Allow empty values in mappings
+  empty-values:
+    forbid-in-block-mappings: false
+    forbid-in-flow-mappings: false
+
+  # Allow trailing spaces in empty lines
+  empty-lines:
+    max-start: 2
+    max-end: 1
+    max: 2
+
+  # Allow comments indentation
+  comments-indentation: disable
+
+  # Allow indentation with 2 spaces
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+
+  # Allow truthy values
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'on', 'off']
+    check-keys: false
+
+  # Allow comments
+  comments:
+    require-starting-space: false
+    ignore-shebangs: true
+
+  # Allow brackets spacing
+  brackets:
+    max-spaces-inside: 1
+    min-spaces-inside: 0
+
+  # Allow dashes in names
+  hyphens:
+    max-spaces-after: 1
+
+  # Allow colons
+  colons:
+    max-spaces-after: 1
+    max-spaces-before: 0
