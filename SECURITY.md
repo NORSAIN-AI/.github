@@ -16,7 +16,7 @@ Instead, please report security vulnerabilities by:
    - Fill out the form with details
 
 2. **Email** (Alternative):
-   - Send details to: security@norsain.ai
+   - Send details to: <security@norsain.ai>
    - Include "SECURITY" in the subject line
 
 ### What to Include
@@ -153,7 +153,8 @@ _No vulnerabilities have been reported yet._
 ## Questions?
 
 If you have questions about this security policy, please contact us at:
-- Email: security@norsain.ai
+
+- Email: <security@norsain.ai>
 - GitHub Discussions: [NORSAIN-AI Discussions](https://github.com/orgs/NORSAIN-AI/discussions)
 
 ---

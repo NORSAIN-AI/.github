@@ -22,18 +22,21 @@ Du jobber på NORSAINs policy- og automasjonsrepo (`.github`).
   - det ikke bryter sikkerhets- eller governance-policy
 
 ## 🧩 Trygge områder
+
 - Oppdatere `.github/workflows/*.yml` (permissions, beskrivelser, validering)
 - Forbedre `PULL_REQUEST_TEMPLATE.md` og issue-maler
 - Oppdatere `README.md`, `CONTRIBUTING.md`, og `docs/README-DESIGN.md`
 - Gjøre patcher relatert til Copilot- eller policy-instruksjoner
 
 ## ⚠️ Ikke gjør dette uten forespørsel
+
 - Endre `LICENSE`
 - Senke sikkerhetsnivå (permissions, branch protection)
 - Fjerne validering (labels/milestone)
 - Legge til hemmeligheter eller tokens
 
 ## 🧠 Husk
+
 - Forklar alltid *Hva*, *Hvorfor* og *Hvordan verifisere*.
 - Foreslå eller utfør endringer på en måte som er **gjennomsiktig og reproduserbar**.
 - Ved commits/PRs: bruk `docs(...)`, `ci(...)`, `chore(...)`, eller `fix(...)` som commit-type.
