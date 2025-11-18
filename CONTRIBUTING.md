@@ -43,6 +43,15 @@ By participating in this project, you agree to abide by our Code of Conduct. Ple
    pip install -r requirements.txt  # for Python projects
    ```
 
+5. **Install pre-commit hooks** (recommended):
+
+   ```bash
+   pip install pre-commit
+   pre-commit install
+   ```
+
+   This will run automatic checks (linting, formatting) before each commit to ensure code quality.
+
 ## How to Contribute
 
 ### Types of Contributions
