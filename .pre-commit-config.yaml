@@ -15,6 +15,7 @@ repos:
       - id: yamllint
         files: \.(yml|yaml)$
         types: [file]
+        args: [--config-file, .yamllint.yaml]
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.41.0
