@@ -1,9 +1,7 @@
 ---
-mode: agent
-version: 1.0
-owner: norsain/platform
-visibility: public
+agent: agent
 ---
+
 # PR Template Prompt
 
 Mål: forbedre Pull Request-mal for klarhet og konsistens.

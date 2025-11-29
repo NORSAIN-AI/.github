@@ -1,9 +1,7 @@
 ---
-mode: agent
-version: 1.0
-owner: norsain/platform
-visibility: public
+agent: agent
 ---
+
 # Workflow Maintenance Prompt
 
 Mål: forbedre eller validere NORSAIN reusable workflows.

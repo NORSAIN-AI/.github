@@ -1,9 +1,7 @@
 ---
-mode: agent
-version: 1.0
-owner: norsain/platform
-visibility: public
+agent: agent
 ---
+
 # NORSAIN Standard Prompt (Global Context)
 
 Du jobber i et NORSAIN-AI repository. Dette kan være et prosjektrepo eller `.github`-policyrepo.

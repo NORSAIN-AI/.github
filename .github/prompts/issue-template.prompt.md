@@ -1,9 +1,7 @@
 ---
-mode: agent
-version: 1.0
-owner: norsain/platform
-visibility: public
+agent: agent
 ---
+
 # Issue Templates Prompt
 
 Mål: gjøre malene tydeligere og redusere triage-tid.

@@ -1,9 +1,7 @@
 ---
-mode: agent
-version: 1.0
-owner: norsain/platform
-visibility: public
+agent: agent
 ---
+
 # Governance Prompt
 
 Du jobber på NORSAIN-policyfiler eller Copilot-instruksjoner.

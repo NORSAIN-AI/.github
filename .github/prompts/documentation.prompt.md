@@ -1,9 +1,7 @@
 ---
-mode: agent
-version: 1.0
-owner: norsain/platform
-visibility: public
+agent: agent
 ---
+
 # Documentation Prompt
 
 Du foreslår forbedringer i dokumentasjon.

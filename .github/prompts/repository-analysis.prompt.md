@@ -1,13 +1,7 @@
 ---
-mode: agent
-version: 1.0
-owner: norsain/platform
-visibility: internal
-permissions:
-  read: full
-  write: none
-scope: repo
+agent: agent
 ---
+
 # Repository Analysis Prompt
 
 Du skal analysere **hele repoet** for NORSAIN-AI med fokus på kvalitet, konsistens og etterlevelse av policy.
