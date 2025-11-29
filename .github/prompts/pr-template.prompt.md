@@ -1,5 +1,5 @@
 ---
-agent: agent
+agent: docs-architect
 ---
 
 # PR Template Prompt
