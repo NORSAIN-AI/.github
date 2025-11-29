@@ -1,31 +1,8 @@
 # NORSAIN-AI /.github
 
-[![Org Policy](https://img.shields.io/badge/org--policy-enforced-blue?style=flat-square)](https://github.com/NORSAIN-AI)
-[![CI Status](https://github.com/NORSAIN-AI/.github/actions/workflows/ci-reusable.yml/badge.svg)](https://github.com/NORSAIN-AI/.github/actions/workflows/ci-reusable.yml)
-[![License](https://img.shields.io/github/license/NORSAIN-AI/.github?style=flat-square)](LICENSE)
+[![Org Policy](https://img.shields.io/badge/org--policy-enforced-blue?style=flat-square)](https://github.com/NORSAIN-AI) [![CI Status](https://github.com/NORSAIN-AI/.github/actions/workflows/ci-reusable.yml/badge.svg)](https://github.com/NORSAIN-AI/.github/actions/workflows/ci-reusable.yml)
 
-Dette repoet er NORSAIN-AI sitt sentrale repositorium for felles policy, maler og automasjon.  
-Det fungerer som organisasjonens kilde til sannhet for:
-
-- gjenbrukbare GitHub Actions-workflows
-- standardiserte PR- og issue-maler
-- Copilot-policy og AI-governance
-- agent-, instructions- og prompt-maler for LLM/Custom GPT
-- bidrags- og kodestandarder på tvers av repos
-
-Alle repos under `NORSAIN-AI` bør referere hit fremfor å duplisere tilsvarende konfigurasjon lokalt.
-
----
-
-## Innholdsfortegnelse
-
-1. Formål og omfang  
-2. Struktur og innhold  
-3. Bruk i andre repos  
-4. Copilot- og LLM-policy  
-5. Gjenbrukbare workflows  
-6. Contributing og endringshåndtering  
-7. Lisens  
+Alle repos under `NORSAIN-AI` bør referere til dette repoet for felles policy, workflows og Copilot-governance.
 
 ---
 
@@ -49,22 +26,22 @@ Repoet skal betraktes som en plattformkomponent: endringer her påvirker flere p
 
 ## 2. Struktur og innhold
 
-| Kategori           | Fil / mappe                                       | Beskrivelse                                                                                          |
-|--------------------|---------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| Workflows          | `.github/workflows/ci-reusable.yml`              | Gjenbrukbar CI-workflow som kan kalles fra andre repos via `workflow_call`.                         |
-|                    | `.github/workflows/pr-checks.yml`                | Referanse-workflow som demonstrerer bruk av `ci-reusable.yml`.                                      |
-| Issue templates    | `.github/ISSUE_TEMPLATE/bug_report.yml`          | Standardmal for feilrapportering med auto-labels.                                                   |
-|                    | `.github/ISSUE_TEMPLATE/feature_request.yml`     | Mal for feature requests.                                                                           |
-|                    | `.github/ISSUE_TEMPLATE/config.yml`              | Konfigurasjon som styrer tilgjengelige issue-typer og peker brukere til riktige maler.              |
-| PR-mal             | `PULL_REQUEST_TEMPLATE.md`                       | Standard PR-mal med typevalg, sjekkliste og krav til dokumentasjon og tester.                       |
-| Copilot-governance | `copilot-instructions.md`                        | Organisasjonsomfattende Copilot-regler og retningslinjer for AI-assistert utvikling.                |
-| Contributing       | `CONTRIBUTING.md`                                | Bidragsguide for NORSAIN-AI, inkludert kodestandarder og commit-konvensjoner.                       |
-| LLM-templates      | `llm/agents/*.agent.template.md`                 | Maler for repo-spesifikke agenter under `.github/agents/` (ekspertprofiler og roller).             |
-|                    | `llm/instructions/*.instructions.template.md`    | Maler for globale, områdespesifikke og agent-bundne instrukser under `.github/instructions/`.       |
-|                    | `llm/prompts/*.prompt.template.md`               | Maler for oppgaveprompter under `.github/prompts/` som knyttes til definerte agenter.              |
-|                    | `llm/copilot/copilot-instructions.template.md`   | Mal for repo-spesifikke Copilot-instruksjoner (`.github/copilot-instructions.md` i hvert repo).     |
-|                    | `llm/meta/*.md`                                  | Felles retningslinjer for navnekonvensjoner, bruk og struktur av LLM-relaterte .github-filer.      |
-| Lisens             | `LICENSE`                                        | Gjeldende lisens for NORSAIN-AI/.github og relaterte artefakter.                                    |
+| Kategori           | Fil / mappe                                       | Beskrivelse                |
+|--------------------|---------------------------------------------------|----------------------------|
+| Workflows          | `.github/workflows/ci-reusable.yml`              | Gjenbrukbar CI-workflow som kan kalles fra andre repos via `workflow_call`. |
+|                    | `.github/workflows/pr-checks.yml`                | Referanse-workflow som demonstrerer bruk av `ci-reusable.yml`. |
+| Issue templates    | `.github/ISSUE_TEMPLATE/bug_report.yml`          | Standardmal for feilrapportering med auto-labels. |
+|                    | `.github/ISSUE_TEMPLATE/feature_request.yml`     | Mal for feature requests.   |
+|                    | `.github/ISSUE_TEMPLATE/config.yml`              | Konfigurasjon som styrer tilgjengelige issue-typer og peker brukere til riktige maler. |
+| PR-mal             | `PULL_REQUEST_TEMPLATE.md`                       | Standard PR-mal med typevalg, sjekkliste og krav til dokumentasjon og tester. |
+| Copilot-governance | `copilot-instructions.md`                        | Organisasjonsomfattende Copilot-regler og retningslinjer for AI-assistert utvikling. |
+| Contributing       | `CONTRIBUTING.md`                                | Bidragsguide for NORSAIN-AI, inkludert kodestandarder og commit-konvensjoner. |
+| LLM-templates      | `llm/agents/*.agent.template.md`                 | Maler for repo-spesifikke agenter under `.github/agents/` (ekspertprofiler og roller). |
+|                    | `llm/instructions/*.instructions.template.md`    | Maler for globale, områdespesifikke og agent-bundne instrukser under `.github/instructions/`. |
+|                    | `llm/prompts/*.prompt.template.md`               | Maler for oppgaveprompter under `.github/prompts/` som knyttes til definerte agenter. |
+|                    | `llm/copilot/copilot-instructions.template.md`   | Mal for repo-spesifikke Copilot-instruksjoner (`.github/copilot-instructions.md` i hvert repo). |
+|                    | `llm/meta/*.md`                                  | Felles retningslinjer for navnekonvensjoner, bruk og struktur av LLM-relaterte .github-filer. |
+| Lisens             | `LICENSE`                                        | Gjeldende lisens for NORSAIN-AI/.github og relaterte artefakter. |
 
 (LLM-mappene kan introduseres og utvides gradvis; README er den autoritative oversikten over hva som til enhver tid er i bruk.)
 
@@ -90,9 +67,8 @@ Detaljer om konkret konfigurering av workflows og LLM-templates ligger i hvert e
 
 ## 4. Copilot- og LLM-policy
 
-Copilot-styringen for NORSAIN-AI er definert i `copilot-instructions.md` og skal anses som autoritativ på organisasjonsnivå.  
+Copilot-styringen for NORSAIN-AI er definert i `copilot-instructions.md` og skal anses som autoritativ på organisasjonsnivå.
 Repo-spesifikke `copilot-instructions.md` skal baseres på malen i `llm/copilot/` og være i tråd med disse prinsippene.
-
 Overordnede prinsipper:
 
 - Copilot skal ikke opprette commits, pushe branches eller opprette/endre pull requests.
@@ -110,24 +86,9 @@ Detaljerte krav til omfang, begrensninger og forventet kvalitet beskrives i `cop
 
 ---
 
-## 5. Gjenbrukbare workflows
-
-`ci-reusable.yml` er standard CI-workflow for NORSAIN-AI-repos og brukes til å:
-
-- verifisere at pull requests oppfyller definerte policykrav (for eksempel labels og milestones)
-- gi et felles utgangspunkt for linting, tester, typechecking og andre kvalitetskontroller
-
-Andre gjenbrukbare workflows kan legges til over tid. Nye workflows skal:
-
-- dokumenteres i denne README-filen (egen seksjon per workflow)
-- beskrives tydelig i tilhørende pull request (formål, omfang og påvirkning)
-
----
-
 ## 6. Contributing og endringshåndtering
 
 Endringer i `.github`-repoet påvirker alle repos som bruker disse standardene. Følg derfor retningslinjene i `CONTRIBUTING.md`.
-
 Overordnede prinsipper:
 
 - Direkte push til `main` skal ikke benyttes; alle endringer gjøres via pull requests.

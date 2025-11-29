@@ -26,6 +26,7 @@ Dette dokumentet forklarer **hvorfor** hoved-README ser ut som den gjør, slik a
 ## 🧱 Struktur og innhold
 
 ### 1. Badges øverst
+
 Viser status, lisens og organisasjonspolicy for å bygge tillit og synlighet i GitHub-søk.
 
 ```md
@@ -102,13 +103,13 @@ Dette er viktig for DevSecOps-rollen og gir tydelig autoritet.
 
 Dette dokumentet skal **ikke** vises i offentlig README, men bevares som referanse i repoet:
 
-```
+```text
 docs/README-DESIGN.md
 ```
 
 Endringer i denne filen bør følge commit-typen:
 
-```
+```text
 docs(readme-design): oppdatert begrunnelse for badges og policy
 ```
 
