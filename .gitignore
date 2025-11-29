@@ -1,0 +1,85 @@
+# .gitignore for NORSAIN-AI/.github (org-level)
+# Ignore OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*~
+
+# VS Code
+.vscode/
+.code-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Node/npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+*.log
+
+# Test, coverage, and build artifacts
+coverage/
+*.cover
+*.lcov
+*.lcov.info
+.cache/
+
+# GitHub Actions/Workflow artifacts
+*.local.env
+.env
+.env.*
+!.env.example
+
+# Pre-commit and lint cache
+.pre-commit-config.yaml.lock
+.pre-commit/
+
+# Mac/Linux system files
+*.DS_Store
+*.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows system files
+Desktop.ini
+$RECYCLE.BIN/
+
+# Misc
+*.orig
+*.rej
+
+# Ignore Copilot session logs (if any)
+.copilot-session/
+
+# Ignore backup files
+*.bak
+*.tmp
+
+# Ignore secrets (never commit real secrets)
+secrets.*
+
+# Ignore workspace settings
+*.code-workspace
+
+# Ignore markdownlint and yamllint cache (if any)
+.markdownlint*
+.yamllint*
+
+# Ignore org-level policy artifacts
+*.policy.json
+
+# End of .gitignore
