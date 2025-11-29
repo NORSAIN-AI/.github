@@ -1,21 +1,14 @@
-# ---
-mode: agent
-version: 1.1
-owner: norsain/platform
-visibility: public
-permissions:
-  commit: conditional
-  pull_request: conditional
----
 # Copilot Instructions – NORSAIN-AI/.github
+Du jobber i NORSAINs organisasjonsnivå `.github`-repo, som inneholder felles policy og automasjon for alle prosjekter.
 
+---
 **Formål:**
 Gi Copilot klare rammer for hvordan den kan hjelpe vedlikeholdere å forbedre dette org-nivå `.github`-repoet.
 Copilot skal som standard foreslå **små, sikre og begrunnede endringer** (patch/diff), men kan utføre commits eller PR-er når det blir **eksplisitt bedt om** og er innenfor NORSAIN-policy.
 
 ---
 
-## 1) Omfang (hva dette repoet er)
+## 1 Omfang (hva dette repoet er)
 
 Dette repoet inneholder **felles politikk og automasjon** for hele NORSAIN-organisasjonen:
 
@@ -27,11 +20,10 @@ Dette repoet inneholder **felles politikk og automasjon** for hele NORSAIN-organ
 - Designnotater: `docs/README-DESIGN.md` (ikke forside)
 - Lisens: `LICENSE`
 
-> Endringer her kan påvirke **alle repos** som refererer workflowene.
-
+- Copilot-governance: `copilot-instructions.md` (dette dokumentet)
 ---
 
-## 2) Mål for Copilot
+## 2 Mål for Copilot
 
 - Foreslå **små, atomiske** forbedringer (≤ 5 filer, ≤ 150 linjer totalt)
 - Gi **patch/diff** og en kort begrunnelse (*Hva* + *Hvorfor*)
@@ -45,23 +37,23 @@ Dette repoet inneholder **felles politikk og automasjon** for hele NORSAIN-organ
 
 ---
 
-## 3) Handlingsgrenser
+## 3 Handlingsgrenser
 
-- 🚫 **Som standard:** Copilot skal ikke opprette branches, commits eller PR-er automatisk.
+- **Som standard:** Copilot skal ikke opprette branches, commits eller PR-er automatisk.
   Den skal alltid levere **Unified diff** først.
-- ✅ **Unntak:** Når en menneskelig vedlikeholder eksplisitt ber om det
+- **Unntak:** Når en menneskelig vedlikeholder eksplisitt ber om det
   (f.eks. “Lag commit” eller “Åpne PR mot main”),
   kan Copilot utføre handlingen, men:
   - Endringen må være gjennomgått eller forklart først.
   - PR må følge sjekklisten og naming conventions (`chore/`, `fix/`, `docs/` osv).
-- ❌ Ikke endre `LICENSE` (annet enn årstall ved behov, med begrunnelse).
-- ❌ Ikke introduser hemmeligheter eller be om brede GitHub-tillatelser.
-- ❌ Ikke fjern validering (labels/milestone) uten migrasjonsplan.
-- ❌ Ikke bryt bakoverkompatibilitet i reusable workflows uten semver-notat.
+- Ikke endre `LICENSE` (annet enn årstall ved behov, med begrunnelse).
+- Ikke introduser hemmeligheter eller be om brede GitHub-tillatelser.
+- Ikke fjern validering (labels/milestone) uten migrasjonsplan.
+- Ikke bryt bakoverkompatibilitet i reusable workflows uten semver-notat.
 
 ---
 
-## 4) Trygge oppgaver (✅)
+## 4 Trygge oppgaver
 
 Copilot kan foreslå patcher for:
 
@@ -73,7 +65,7 @@ Copilot kan foreslå patcher for:
 
 ---
 
-## 5) Oppgaver som krever eksplisitt godkjenning (⚠️)
+## 5 Oppgaver som krever eksplisitt godkjenning
 
 - Endre **valideringslogikk** i `ci-reusable.yml`
 - Legge til **nye reusable workflows** som påvirker mange repos
@@ -81,11 +73,11 @@ Copilot kan foreslå patcher for:
 - Endre **PR-policy** (malens krav, commit-regler, valideringspunkter)
 - Flytte/fjerne filer som påvirker **organisasjonsstandard**
 
-> For slike oppgaver: foreslå alternativer og dokumenter *risiko/mitigering* i kommentaren.
+
 
 ---
 
-## 6) Filgrenser og konvensjoner
+## 6 Filgrenser og konvensjoner
 
 ### **Workflows (`.github/workflows/*.yml`)**
 - Bruk `permissions` **per jobb/steg** (least privilege)
@@ -113,7 +105,7 @@ Copilot kan foreslå patcher for:
 
 ---
 
-## 7) Format for forslag
+## 7 Format for forslag
 
 Når du foreslår endringer:
 
@@ -123,7 +115,9 @@ Når du foreslår endringer:
    diff --git a/.github/workflows/ci-reusable.yml b/.github/workflows/ci-reusable.yml
    --- a/.github/workflows/ci-reusable.yml
    +++ b/.github/workflows/ci-reusable.yml
-   @@
+    @@ -10,6 +10,8 @@ jobs:
+      build:
+      runs-on: ubuntu-latest
    - permissions:
    -   contents: read
    + permissions:
@@ -135,7 +129,7 @@ Når du foreslår endringer:
 
 ---
 
-## 8) Commit- og PR-policy (for mennesker)
+## 8 Commit- og PR-policy (for mennesker)
 
 * Følg **Conventional Commits**:
   `ci(reusable): ...`, `docs(readme): ...`, `fix(template): ...`
@@ -150,7 +144,7 @@ Når du foreslår endringer:
 
 ---
 
-## 9) Sikkerhet og personvern
+## 9 Sikkerhet og personvern
 
 * Ingen hemmeligheter i repoet (bruk GitHub Secrets i prosjekter, ikke her)
 * Ikke be om eller lagre tokens i kode
@@ -159,7 +153,7 @@ Når du foreslår endringer:
 
 ---
 
-## 10) Eksempel-prompter
+## 10 Eksempel-prompter
 
 * “Foreslå *patch/diff* som gjør `ci-reusable.yml` mer robust ved å feile tydelig når `check-labels: true` og PR mangler labels.”
 * “Lag patch som utvider `PULL_REQUEST_TEMPLATE.md` med del for Risiko/mitigering.”
@@ -168,7 +162,7 @@ Når du foreslår endringer:
 
 ---
 
-## 11) Hva Copilot skal **avvise**
+## 11 Hva Copilot skal **avvise**
 
 * Forslag som introduserer hemmeligheter eller brede permissions
 * Forslag som fjerner sikkerhets-/valideringskrav uten migrasjonsnotat
@@ -177,7 +171,7 @@ Når du foreslår endringer:
 
 ---
 
-## 12) Definisjon av ferdig (DoD)
+## 12 Definisjon av ferdig (DoD)
 
 * Endringen er **liten, tydelig og reproduserbar**
 * README/Docs oppdatert der det er relevant
@@ -189,16 +183,3 @@ Når du foreslår endringer:
 © 2025 NORSAIN-AI — Offentlig repo • trygg automasjon og Copilot governance
 
 ```
-
----
-
-### ✅ Hva som er nytt i denne versjonen
-| Endring | Forklaring |
-|----------|-------------|
-| **“Handlingsgrenser”** erstatter “Absolutte begrensninger” | Lar Copilot gjøre commits/PRs når du eksplisitt ber om det |
-| **Klarere tillatelsesnivåer** | Skiller mellom “default safe” og “explicit allowed” |
-| **Modernisert språk** | Passer for offentlig dokumentasjon (engasjerende men formelt) |
-| **Forbedret struktur** | Kortere seksjoner, lettere å scanne |
-| **Ikke-mål presisert** | Fjerner misforståelse om at Copilot ikke kan bidra til workflow-oppdateringer |
-
---

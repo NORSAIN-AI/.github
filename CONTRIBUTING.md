@@ -1,228 +1,74 @@
-# Contributing to NORSAIN-AI
+# Contributing to NORSAIN-AI/.github
 
-Thank you for your interest in contributing to NORSAIN-AI! We welcome contributions from the community and are grateful for your support. 🙏
+This document governs contributions to the NORSAIN-AI/.github repository, which serves as the source of truth for organization-wide GitHub policies, workflows, and automation. This is **not** a general product or code repository.
 
-## Table of Contents
+## Scope and Audience
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [How to Contribute](#how-to-contribute)
-- [Development Workflow](#development-workflow)
-- [Coding Standards](#coding-standards)
-- [Commit Convention](#commit-convention)
-- [Pull Request Process](#pull-request-process)
-- [Reporting Bugs](#reporting-bugs)
-- [Feature Requests](#feature-requests)
-- [Community](#community)
+- This repo is for NORSAIN-AI maintainers and trusted contributors only.
+- Contributions are limited to policy, workflow, template, and governance improvements.
+- External feature requests, UI/UX, translations, and generic code changes are **not** relevant here.
 
-## Code of Conduct
+## What Contributions Are Relevant?
 
-By participating in this project, you agree to abide by our Code of Conduct. Please be respectful and considerate in all interactions.
+- Improvements to reusable workflows (`.github/workflows/*.yml`)
+- Enhancements to PR/issue templates and documentation
+- Security and permissions hardening
+- Copilot/governance policy updates
+- Consistency and compliance improvements across org-level automation
 
-## Getting Started
+## Governance and Risk
 
-1. **Fork the repository** to your GitHub account
-2. **Clone your fork** to your local machine:
-   ```bash
-   git clone https://github.com/YOUR-USERNAME/REPO-NAME.git
-   cd REPO-NAME
-   ```
-3. **Add upstream remote**:
-   ```bash
-   git remote add upstream https://github.com/NORSAIN-AI/REPO-NAME.git
-   ```
-4. **Install dependencies** (varies by project):
-   ```bash
-   npm install  # for Node.js projects
-   # or
-   pip install -r requirements.txt  # for Python projects
-   ```
+- Changes here affect **all NORSAIN-AI repositories**.
+- All changes must be reviewed by designated maintainers.
+- Breaking changes to workflows must follow semver and be documented in a changelog.
+- Backward compatibility is required unless explicitly approved.
+- All org-level changes should be tested in a dry-run or test-repo before merging.
 
-## How to Contribute
+## Process
 
-### Types of Contributions
+1. **Create a branch** using kebab-case, e.g. `chore/update-pr-template`.
+2. **Make focused, minimal changes** (≤ 5 files, ≤ 150 lines preferred).
+3. **Follow [Conventional Commits](https://www.conventionalcommits.org/)** for commit messages.
+4. **Open a Pull Request** and fill out the PR template.
+5. **Assign appropriate labels and milestones** (required by CI).
+6. **Request review** from a NORSAIN-AI maintainer.
+7. **Document impact**: Clearly state which repos or workflows are affected.
+8. **Link to relevant policies** (see below).
 
-We appreciate all types of contributions:
+## Coding and File Standards
 
-- 🐛 **Bug fixes**
-- ✨ **New features**
-- 📝 **Documentation improvements**
-- ✅ **Test coverage**
-- 🔧 **Code refactoring**
-- 🎨 **UI/UX improvements**
-- 🌐 **Translations**
+- Only YAML, Markdown, and shell scripting are relevant here.
+- Follow existing formatting and linting rules (see `.yamllint.yaml`, `.markdownlint.json`).
+- Do **not** add language-specific standards for JS/TS, Python, Go, etc.
 
-## Development Workflow
+## Copilot and AI Governance
 
-1. **Create a new branch** for your changes:
-   ```bash
-   git checkout -b feat/your-feature-name
-   # or
-   git checkout -b fix/your-bug-fix
-   ```
+- All contributors must read and follow [`copilot-instructions.md`](.github/copilot-instructions.md).
+- Copilot/AI changes must be small, auditable, and follow NORSAIN governance.
+- Do **not** use Copilot to create commits or PRs unless explicitly requested.
 
-2. **Make your changes** following our coding standards
+## Security and Permissions
 
-3. **Test your changes**:
-   ```bash
-   npm test  # or appropriate test command
-   ```
+- Never add secrets, tokens, or lower security settings.
+- All permission changes must be justified and reviewed.
+- Do not remove validation steps (labels, milestones) without migration plan.
 
-4. **Commit your changes** using conventional commits:
-   ```bash
-   git commit -m "feat: add new feature"
-   ```
+## Code of Conduct and Policies
 
-5. **Keep your branch up to date**:
-   ```bash
-   git fetch upstream
-   git rebase upstream/main
-   ```
+- All contributors must follow the [NORSAIN-AI Code of Conduct](https://github.com/NORSAIN-AI/.github/blob/main/CODE_OF_CONDUCT.md).
+- See [`copilot-instructions.md`](.github/copilot-instructions.md) for AI governance.
+- For org-wide dev standards, refer to internal documentation if available.
 
-6. **Push to your fork**:
-   ```bash
-   git push origin feat/your-feature-name
-   ```
+## Internal vs. External Contributions
 
-7. **Open a Pull Request** on GitHub
-
-## Coding Standards
-
-### General Guidelines
-
-- Write clear, readable, and maintainable code
-- Follow the existing code style in the project
-- Add comments for complex logic
-- Write meaningful variable and function names
-- Keep functions small and focused
-- Avoid unnecessary complexity
-
-### Language-Specific Standards
-
-#### JavaScript/TypeScript
-- Use ESLint and Prettier configurations
-- Prefer `const` and `let` over `var`
-- Use async/await over callbacks
-- Write TypeScript types for all public APIs
-
-#### Python
-- Follow PEP 8 style guide
-- Use type hints where appropriate
-- Write docstrings for all public functions
-- Use `black` for code formatting
-
-#### Go
-- Follow effective Go guidelines
-- Use `gofmt` and `golint`
-- Write clear error messages
-- Document exported functions
-
-## Commit Convention
-
-We use [Conventional Commits](https://www.conventionalcommits.org/) for clear and semantic commit messages:
-
-```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
-```
-
-### Types
-
-- `feat`: A new feature
-- `fix`: A bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes (formatting, missing semicolons, etc.)
-- `refactor`: Code refactoring without changing functionality
-- `perf`: Performance improvements
-- `test`: Adding or updating tests
-- `build`: Changes to build system or dependencies
-- `ci`: Changes to CI configuration
-- `chore`: Other changes that don't modify src or test files
-- `revert`: Revert a previous commit
-
-### Examples
-
-```bash
-feat(auth): add OAuth2 authentication
-fix(api): resolve null pointer exception
-docs(readme): update installation instructions
-test(user): add unit tests for user service
-```
-
-## Pull Request Process
-
-1. **Fill out the PR template** completely
-2. **Link related issues** using keywords (Closes #123)
-3. **Ensure CI passes** - all tests and checks must pass
-4. **Request review** from appropriate team members
-5. **Address feedback** from reviewers
-6. **Keep PR focused** - one feature/fix per PR
-7. **Update documentation** if needed
-8. **Add tests** for new functionality
-
-### PR Checklist
-
-Before submitting your PR, ensure:
-
-- [ ] Code follows project style guidelines
-- [ ] Self-reviewed the code
-- [ ] Added comments for complex logic
-- [ ] Updated documentation
-- [ ] Added tests that prove the fix/feature works
-- [ ] All tests pass locally
-- [ ] No new warnings introduced
-- [ ] Checked for security vulnerabilities
-- [ ] Appropriate labels assigned
-- [ ] Linked related issues
-
-## Reporting Bugs
-
-Use the [Bug Report](.github/ISSUE_TEMPLATE/bug_report.yml) template to report bugs. Include:
-
-- Clear description of the bug
-- Steps to reproduce
-- Expected vs actual behavior
-- Environment details
-- Relevant logs or screenshots
-
-## Feature Requests
-
-Use the [Feature Request](.github/ISSUE_TEMPLATE/feature_request.yml) template to suggest features. Include:
-
-- Problem statement
-- Proposed solution
-- Alternative solutions considered
-- Benefits of the feature
-
-## Community
-
-### Getting Help
-
-- 💬 [GitHub Discussions](https://github.com/orgs/NORSAIN-AI/discussions) - Ask questions and share ideas
-- 📖 [Documentation](https://github.com/NORSAIN-AI) - Browse our guides and references
-- 🐛 [Issues](https://github.com/NORSAIN-AI/.github/issues) - Report bugs or request features
-
-### Stay Connected
-
-- Follow us on GitHub
-- Star repositories you find useful
-- Share feedback and suggestions
-
-## Recognition
-
-We value all contributions! Contributors will be:
-
-- Listed in release notes
-- Credited in project documentation
-- Invited to join our community discussions
+- This repo is primarily for internal NORSAIN-AI maintainers.
+- External contributions are accepted only by prior agreement.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same license as the project (see LICENSE file).
+By contributing, you agree your work is licensed under the same license as this repository (see LICENSE).
 
 ---
 
-Thank you for contributing to NORSAIN-AI! 🚀
+**Summary:**
+This is a governance and automation repo. All changes must be minimal, auditable, and reviewed. Focus on workflows, templates, security, and policy—not product code or community features.
