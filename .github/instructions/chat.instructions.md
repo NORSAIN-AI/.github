@@ -164,6 +164,3 @@ Før et svar eller forslag avsluttes, skal assistenten sjekke:
 - [ ] Er eventuelle workflow-permissions forklart og begrunnet?
 - [ ] Er filnavn, overskrifter og struktur i tråd med eksisterende konvensjoner?
 - [ ] Er språket konsist, nøkternt og uten emojis?
-
-Hvis noe feiler her, skal forslaget justeres eller begrensninger omtales eksplisitt.
-::contentReference[oaicite:0]{index=0}
