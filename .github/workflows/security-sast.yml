@@ -1,0 +1,171 @@
+name: Reusable Security — SAST (Semgrep)
+
+# Why: Centralize SAST scanning across NORSAIN-AI repos with graceful
+# degradation so private repos without GHAS still get inline PR feedback.
+# What: Runs `semgrep ci` when SEMGREP_APP_TOKEN is available (Platform org
+# `norsain_com`), else falls back to OSS `semgrep scan` piped through
+# reviewdog for inline PR comments. Fails on findings at/above fail-severity.
+# Test: Call from a repo with a known Semgrep smell (eval of user input);
+# verify PR fails with inline comment. Remove the token and verify the
+# fallback path still fails the PR with a comment.
+
+on:
+  workflow_call:
+    inputs:
+      paths:
+        description: 'Paths to scan (space-separated). Defaults to full repo.'
+        required: false
+        type: string
+        default: '.'
+      fail-severity:
+        description: 'Minimum severity that fails the job (ERROR, WARNING, INFO).'
+        required: false
+        type: string
+        default: 'ERROR'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  semgrep:
+    name: Semgrep SAST
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Semgrep Platform token
+        id: token
+        shell: sh
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+        run: |
+          if [ -n "${SEMGREP_APP_TOKEN:-}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run semgrep ci (Platform-connected)
+        id: semgrep-ci
+        if: steps.token.outputs.present == 'true'
+        continue-on-error: true
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+        shell: sh
+        run: |
+          set -eu
+          cd "${GITHUB_WORKSPACE}"
+          if semgrep ci --json-output=semgrep.json --sarif-output=semgrep.sarif; then
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run semgrep scan (OSS fallback)
+        id: semgrep-scan
+        if: steps.token.outputs.present == 'false' || steps.semgrep-ci.outputs.failed == 'true'
+        shell: sh
+        env:
+          PATHS: ${{ inputs.paths }}
+          FAIL_SEVERITY: ${{ inputs.fail-severity }}
+        run: |
+          set -eu
+          cd "${GITHUB_WORKSPACE}"
+          # shellcheck disable=SC2086
+          semgrep scan \
+            --config=p/trailofbits \
+            --config=p/owasp-top-ten \
+            --config=p/security-audit \
+            --config=auto \
+            --json-output=semgrep.json \
+            --severity="${FAIL_SEVERITY}" \
+            --error \
+            ${PATHS}
+
+      - name: Upload Semgrep findings artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-findings
+          path: |
+            semgrep.json
+            semgrep.sarif
+          retention-days: 30
+          if-no-files-found: ignore
+
+  reviewdog:
+    name: Reviewdog PR comments (fallback)
+    needs: semgrep
+    if: always() && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Semgrep findings
+        uses: actions/download-artifact@v4
+        with:
+          name: semgrep-findings
+          path: .
+
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Convert Semgrep JSON to rdjson and post PR comments
+        if: hashFiles('semgrep.json') != ''
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Why: Convert Semgrep OSS JSON to reviewdog rdjson for inline PR
+          # comments when Platform-native comments are unavailable.
+          python3 - <<'PY' > semgrep.rdjson
+          import json, sys
+          with open("semgrep.json") as fh:
+              data = json.load(fh)
+          sev_map = {"ERROR": "ERROR", "WARNING": "WARNING", "INFO": "INFO"}
+          diagnostics = []
+          for r in data.get("results", []):
+              start = r.get("start", {})
+              end = r.get("end", {})
+              sev = (r.get("extra", {}).get("severity") or "WARNING").upper()
+              diagnostics.append({
+                  "message": r.get("extra", {}).get("message", r.get("check_id", "")),
+                  "location": {
+                      "path": r.get("path", ""),
+                      "range": {
+                          "start": {"line": start.get("line", 1), "column": start.get("col", 1)},
+                          "end": {"line": end.get("line", 1), "column": end.get("col", 1)},
+                      },
+                  },
+                  "severity": sev_map.get(sev, "WARNING"),
+                  "source": {"name": "semgrep", "url": "https://semgrep.dev"},
+                  "code": {"value": r.get("check_id", "")},
+              })
+          payload = {
+              "source": {"name": "semgrep", "url": "https://semgrep.dev"},
+              "diagnostics": diagnostics,
+          }
+          json.dump(payload, sys.stdout)
+          PY
+          reviewdog \
+            -f=rdjson \
+            -name="semgrep" \
+            -reporter=github-pr-review \
+            -level=warning \
+            -fail-on-error=false < semgrep.rdjson

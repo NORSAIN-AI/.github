@@ -30,6 +30,8 @@ Repoet skal betraktes som en plattformkomponent: endringer her påvirker flere p
 |--------------------|---------------------------------------------------|----------------------------|
 | Workflows          | `.github/workflows/ci-reusable.yml`              | Gjenbrukbar CI-workflow som kan kalles fra andre repos via `workflow_call`. |
 |                    | `.github/workflows/pr-checks.yml`                | Referanse-workflow som demonstrerer bruk av `ci-reusable.yml`. |
+|                    | `.github/workflows/security-sast.yml`            | Reusable Semgrep SAST-workflow (Platform-tilkoblet med graceful OSS-fallback og Reviewdog inline PR-kommentarer). |
+|                    | `.github/workflows/security-secrets.yml`         | Reusable secrets-scanning workflow (Gitleaks per PR + TruffleHog ukentlig deep sweep med issue-opprettelse). |
 | Issue templates    | `.github/ISSUE_TEMPLATE/bug_report.yml`          | Standardmal for feilrapportering med auto-labels. |
 |                    | `.github/ISSUE_TEMPLATE/feature_request.yml`     | Mal for feature requests.   |
 |                    | `.github/ISSUE_TEMPLATE/config.yml`              | Konfigurasjon som styrer tilgjengelige issue-typer og peker brukere til riktige maler. |
@@ -62,6 +64,44 @@ Prosjekt-repos under `NORSAIN-AI` skal:
    - Opprette repo-spesifikke `copilot-instructions.md` basert på `llm/copilot/copilot-instructions.template.md`.
 
 Detaljer om konkret konfigurering av workflows og LLM-templates ligger i hvert enkelt prosjekt-repo, men alle skal peke tilbake til dette repoet som kilden for policy, maler og gjenbrukbare komponenter.
+
+---
+
+## 3a. Security Workflows
+
+Reusable security workflows in `.github/workflows/` provide a shared baseline
+for SAST and secrets scanning across all NORSAIN-AI repos. Callers must use
+`secrets: inherit` so org-level secrets (e.g. `SEMGREP_APP_TOKEN`) reach the
+reusable workflow context.
+
+- `security-sast.yml` — Semgrep SAST with Platform-connected mode when
+  `SEMGREP_APP_TOKEN` is present (org `norsain_com`, native PR comments,
+  dashboard), gracefully falling back to OSS `semgrep scan` with Reviewdog
+  inline PR comments. Fails on findings at or above `fail-severity`
+  (default `ERROR`). Uploads `semgrep.json` as a workflow artifact.
+- `security-secrets.yml` — Gitleaks on every PR/push (uses repo-root
+  `.gitleaks.toml`, posts PR comment, fails on find) plus a weekly
+  TruffleHog deep sweep (Monday 06:00 UTC, `--only-verified`) that opens a
+  tracked GitHub issue on verified findings. Also runnable via
+  `workflow_dispatch`.
+
+After this repo is tagged `v1`, callers wire in the reusable workflows:
+
+```yaml
+name: Security
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  sast:
+    uses: NORSAIN-AI/.github/.github/workflows/security-sast.yml@v1
+    secrets: inherit
+  secrets-scan:
+    uses: NORSAIN-AI/.github/.github/workflows/security-secrets.yml@v1
+    secrets: inherit
+```
 
 ---
 
