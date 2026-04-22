@@ -20,6 +20,6 @@ jobs:
         with:
           mode: minimum
           count: 1
-          labels: "bug, enhancement, documentation, dependencies, ci-cd, security, configuration, testing, wontfix, duplicate, invalid, question"
+          labels: "triage, bug, enhancement, documentation, dependencies, ci-cd, security, configuration, testing, wontfix, duplicate, invalid, question"
           add_comment: true
           message: "This ${{ github.event_name == 'pull_request' && 'PR' || 'issue' }} requires at least one label to be added before it can be merged/processed."
