@@ -30,6 +30,8 @@ Repoet skal betraktes som en plattformkomponent: endringer her påvirker flere p
 |--------------------|---------------------------------------------------|----------------------------|
 | Workflows          | `.github/workflows/ci-reusable.yml`              | Gjenbrukbar CI-workflow som kan kalles fra andre repos via `workflow_call`. |
 |                    | `.github/workflows/pr-checks.yml`                | Referanse-workflow som demonstrerer bruk av `ci-reusable.yml`. |
+|                    | `.github/workflows/security-python.yml`          | Reusable Python security-lint workflow (uv + Ruff `--select S` som erstatter Bandit, med reviewdog inline PR-kommentarer og S-rule enforcement gate). |
+|                    | `.github/workflows/security-iac.yml`             | Reusable Terraform IaC-scan workflow (Checkov + reviewdog inline PR-kommentarer, custom severity-gate som feiler PR på `fail-on` eller høyere). |
 | Issue templates    | `.github/ISSUE_TEMPLATE/bug_report.yml`          | Standardmal for feilrapportering med auto-labels. |
 |                    | `.github/ISSUE_TEMPLATE/feature_request.yml`     | Mal for feature requests.   |
 |                    | `.github/ISSUE_TEMPLATE/config.yml`              | Konfigurasjon som styrer tilgjengelige issue-typer og peker brukere til riktige maler. |
@@ -62,6 +64,43 @@ Prosjekt-repos under `NORSAIN-AI` skal:
    - Opprette repo-spesifikke `copilot-instructions.md` basert på `llm/copilot/copilot-instructions.template.md`.
 
 Detaljer om konkret konfigurering av workflows og LLM-templates ligger i hvert enkelt prosjekt-repo, men alle skal peke tilbake til dette repoet som kilden for policy, maler og gjenbrukbare komponenter.
+
+---
+
+## 3a. Security Workflows
+
+Reusable security workflows in `.github/workflows/` provide a shared baseline
+for Python linting and Terraform scanning across all NORSAIN-AI repos.
+Callers must use `secrets: inherit` so `GITHUB_TOKEN` reaches reviewdog for
+inline PR comments. Each workflow also self-gates on file presence so it is
+a safe no-op when called from an unrelated repo.
+
+- `security-python.yml` — Installs `uv` and Ruff (latest), runs a broad lint
+  (`S,E,F,B,I,N,UP,SIM,TID,RUF`) whose JSON output is converted to rdjson
+  and posted via reviewdog, then runs a strict enforcement pass on `--select
+  S` that fails the job on any security finding. Uploads `ruff.json` as an
+  artifact. Inputs: `python-version` (default `3.14`), `paths` (default
+  `.`), `fail-on` (default `error`).
+- `security-iac.yml` — Sets up Terraform for Checkov's provider schema
+  resolution, runs Checkov with `soft_fail: true`, converts JSON findings
+  to rdjson for reviewdog inline PR comments, then runs a severity gate
+  that fails the job when any finding is at or above `fail-on`. Uploads
+  `checkov.json` as an artifact. Inputs: `directory` (default `.`),
+  `fail-on` (default `HIGH`), `terraform-version` (default `1.7.0`).
+
+After this repo is tagged `v1`, callers wire in the reusable workflows:
+
+```yaml
+jobs:
+  python-lint:
+    if: ${{ hashFiles('**/pyproject.toml') != '' }}
+    uses: NORSAIN-AI/.github/.github/workflows/security-python.yml@v1
+    secrets: inherit
+  iac:
+    if: ${{ hashFiles('**/*.tf') != '' }}
+    uses: NORSAIN-AI/.github/.github/workflows/security-iac.yml@v1
+    secrets: inherit
+```
 
 ---
 

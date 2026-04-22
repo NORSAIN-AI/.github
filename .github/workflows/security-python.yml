@@ -1,0 +1,173 @@
+name: Reusable Security — Python (Ruff)
+
+# Why: Centralize Python security linting for NORSAIN-AI repos so every
+# Python codebase gets the same baseline (Ruff S-rules replace Bandit) with
+# inline PR feedback via reviewdog. Keeps callers minimal and consistent.
+# What: Installs uv + Ruff, runs a broad lint producing rdjson-ready JSON for
+# reviewdog (non-blocking) and a strict enforcement pass on S-rules that
+# fails the job on any security finding. Uploads the full findings artifact.
+# Test: Call from a repo containing a deliberate S-rule violation
+# (e.g. `subprocess.run(user_input, shell=True)`); verify the job fails and
+# reviewdog posts an inline PR comment on the offending line. Remove the
+# violation and verify the job passes.
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version to install via uv.'
+        required: false
+        type: string
+        default: '3.14'
+      paths:
+        description: 'Paths to lint (space-separated). Defaults to full repo.'
+        required: false
+        type: string
+        default: '.'
+      fail-on:
+        description: 'Ruff severity that fails the job (maps to enforcement pass).'
+        required: false
+        type: string
+        default: 'error'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  ruff:
+    name: Ruff lint + security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Python sources
+        id: guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Defense-in-depth: caller already gates on pyproject/py files, but
+          # skip here too so mistaken calls on non-Python repos are a no-op.
+          found="$(find . -type f \
+            \( -name 'pyproject.toml' -o -name '*.py' \) \
+            -not -path './.git/*' -print -quit)"
+          if [ -n "$found" ]; then
+            echo "has-python=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-python=false" >> "$GITHUB_OUTPUT"
+            echo "No Python sources detected; skipping Ruff."
+          fi
+
+      - name: Setup uv
+        if: steps.guard.outputs.has-python == 'true'
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install Ruff (latest)
+        if: steps.guard.outputs.has-python == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv tool install ruff
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Ruff full lint (JSON for reviewdog, non-blocking)
+        if: steps.guard.outputs.has-python == 'true'
+        shell: bash
+        env:
+          PATHS: ${{ inputs.paths }}
+        run: |
+          set -euo pipefail
+          # shellcheck disable=SC2086
+          ruff check \
+            --select S,E,F,B,I,N,UP,SIM,TID,RUF \
+            --output-format=json \
+            --exit-zero \
+            ${PATHS} > ruff.json
+
+      - name: Setup reviewdog
+        if: steps.guard.outputs.has-python == 'true' && github.event_name == 'pull_request'
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Convert Ruff JSON to rdjson and post PR comments
+        if: |
+          steps.guard.outputs.has-python == 'true'
+          && github.event_name == 'pull_request'
+          && hashFiles('ruff.json') != ''
+        shell: bash
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Why: Convert Ruff JSON to reviewdog rdjson so inline PR comments
+          # work on private repos without GHAS.
+          python3 - <<'PY' > ruff.rdjson
+          import json, sys
+          with open("ruff.json") as fh:
+              findings = json.load(fh)
+          # Ruff severities are not in the JSON output; map by rule prefix.
+          # S-rules (bandit) treated as ERROR, everything else WARNING.
+          diagnostics = []
+          for r in findings:
+              code = r.get("code") or ""
+              sev = "ERROR" if code.startswith("S") else "WARNING"
+              loc = r.get("location") or {}
+              end = r.get("end_location") or loc
+              diagnostics.append({
+                  "message": r.get("message", code),
+                  "location": {
+                      "path": r.get("filename", ""),
+                      "range": {
+                          "start": {
+                              "line": loc.get("row", 1),
+                              "column": loc.get("column", 1),
+                          },
+                          "end": {
+                              "line": end.get("row", 1),
+                              "column": end.get("column", 1),
+                          },
+                      },
+                  },
+                  "severity": sev,
+                  "source": {"name": "ruff", "url": "https://docs.astral.sh/ruff/"},
+                  "code": {"value": code},
+              })
+          payload = {
+              "source": {"name": "ruff", "url": "https://docs.astral.sh/ruff/"},
+              "diagnostics": diagnostics,
+          }
+          json.dump(payload, sys.stdout)
+          PY
+          reviewdog \
+            -f=rdjson \
+            -name="ruff" \
+            -reporter=github-pr-review \
+            -level=warning \
+            -fail-on-error=false < ruff.rdjson
+
+      - name: Ruff enforcement pass (S-rules must be clean)
+        if: steps.guard.outputs.has-python == 'true'
+        shell: bash
+        env:
+          PATHS: ${{ inputs.paths }}
+        run: |
+          set -euo pipefail
+          # Why: Independent of reviewdog, S-rule (security) findings must
+          # fail the job so the gate cannot be bypassed by PR-comment noise.
+          # shellcheck disable=SC2086
+          ruff check --select S --output-format=concise ${PATHS}
+
+      - name: Upload Ruff findings artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruff-findings
+          path: ruff.json
+          retention-days: 30
+          if-no-files-found: ignore

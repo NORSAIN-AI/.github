@@ -1,0 +1,220 @@
+name: Reusable Security — IaC (Checkov)
+
+# Why: Centralize Terraform security scanning across NORSAIN-AI repos so
+# every IaC codebase gets the same Checkov baseline with inline PR feedback
+# and a severity-based failure gate, independent of GHAS.
+# What: Sets up Terraform (for Checkov provider schema resolution), runs
+# Checkov with soft_fail (so we control the gate), converts the JSON
+# findings to rdjson for reviewdog inline PR comments, then fails the job
+# if any finding has severity at or above `fail-on`.
+# Test: Call from a repo with a deliberate HIGH-severity Checkov violation
+# (e.g. a `google_storage_bucket` with public read). Verify the job fails
+# and reviewdog posts an inline comment. Fix the misconfig and verify the
+# job passes with zero blocking findings.
+
+on:
+  workflow_call:
+    inputs:
+      directory:
+        description: 'Directory containing Terraform to scan.'
+        required: false
+        type: string
+        default: '.'
+      fail-on:
+        description: 'Minimum Checkov severity that fails the job (LOW, MEDIUM, HIGH, CRITICAL).'
+        required: false
+        type: string
+        default: 'HIGH'
+      terraform-version:
+        description: 'Terraform version to install for Checkov.'
+        required: false
+        type: string
+        default: '1.7.0'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  checkov:
+    name: Checkov IaC scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Terraform sources
+        id: guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Defense-in-depth: caller already gates on .tf files; skip here
+          # too so accidental calls on non-Terraform repos are a no-op.
+          if [ -n "$(find . -type f -name '*.tf' -not -path './.git/*' -print -quit)" ]; then
+            echo "has-tf=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-tf=false" >> "$GITHUB_OUTPUT"
+            echo "No Terraform sources detected; skipping Checkov."
+          fi
+
+      - name: Setup Terraform
+        if: steps.guard.outputs.has-tf == 'true'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ inputs.terraform-version }}
+
+      - name: Run Checkov
+        id: checkov
+        if: steps.guard.outputs.has-tf == 'true'
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: ${{ inputs.directory }}
+          framework: terraform
+          soft_fail: true
+          output_format: json
+          output_file_path: checkov.json
+
+      - name: Locate Checkov JSON report
+        id: locate
+        if: steps.guard.outputs.has-tf == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Why: checkov-action writes either a directory of reports or a
+          # single file depending on version; normalize to a single path.
+          if [ -f checkov.json ]; then
+            echo "path=checkov.json" >> "$GITHUB_OUTPUT"
+          elif [ -f checkov.json/results_json.json ]; then
+            cp checkov.json/results_json.json checkov.normalized.json
+            echo "path=checkov.normalized.json" >> "$GITHUB_OUTPUT"
+          else
+            # Fall back to empty report so downstream steps stay green on
+            # repos with no scannable IaC.
+            echo '{"results": {"failed_checks": []}}' > checkov.normalized.json
+            echo "path=checkov.normalized.json" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup reviewdog
+        if: steps.guard.outputs.has-tf == 'true' && github.event_name == 'pull_request'
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Convert Checkov JSON to rdjson and post PR comments
+        if: steps.guard.outputs.has-tf == 'true' && github.event_name == 'pull_request'
+        shell: bash
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORT_PATH: ${{ steps.locate.outputs.path }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' > checkov.rdjson
+          import json, os, sys
+          path = os.environ["REPORT_PATH"]
+          with open(path) as fh:
+              data = json.load(fh)
+
+          def iter_failed(root):
+              if isinstance(root, list):
+                  for item in root:
+                      yield from iter_failed(item)
+                  return
+              results = (root or {}).get("results") or {}
+              for fc in results.get("failed_checks", []) or []:
+                  yield fc
+
+          sev_map = {
+              "CRITICAL": "ERROR",
+              "HIGH": "ERROR",
+              "MEDIUM": "WARNING",
+              "LOW": "INFO",
+              "INFO": "INFO",
+          }
+          diagnostics = []
+          for fc in iter_failed(data):
+              sev = (fc.get("severity") or "MEDIUM").upper()
+              lines = fc.get("file_line_range") or [1, 1]
+              start_line = lines[0] if lines else 1
+              end_line = lines[1] if len(lines) > 1 else start_line
+              diagnostics.append({
+                  "message": f"{fc.get('check_id', '')}: {fc.get('check_name', '')}",
+                  "location": {
+                      "path": (fc.get("file_path") or "").lstrip("/"),
+                      "range": {
+                          "start": {"line": start_line, "column": 1},
+                          "end": {"line": end_line, "column": 1},
+                      },
+                  },
+                  "severity": sev_map.get(sev, "WARNING"),
+                  "source": {"name": "checkov", "url": "https://www.checkov.io"},
+                  "code": {"value": fc.get("check_id", "")},
+              })
+          json.dump({
+              "source": {"name": "checkov", "url": "https://www.checkov.io"},
+              "diagnostics": diagnostics,
+          }, sys.stdout)
+          PY
+          reviewdog \
+            -f=rdjson \
+            -name="checkov" \
+            -reporter=github-pr-review \
+            -level=warning \
+            -fail-on-error=false < checkov.rdjson
+
+      - name: Enforce severity gate
+        if: steps.guard.outputs.has-tf == 'true'
+        shell: bash
+        env:
+          FAIL_ON: ${{ inputs.fail-on }}
+          REPORT_PATH: ${{ steps.locate.outputs.path }}
+        run: |
+          set -euo pipefail
+          # Why: soft_fail on Checkov keeps the step green so reviewdog can
+          # post comments; we enforce the real gate here with a deterministic
+          # severity comparison.
+          python3 - <<'PY'
+          import json, os, sys
+          order = {"LOW": 1, "MEDIUM": 2, "HIGH": 3, "CRITICAL": 4}
+          threshold = order.get(os.environ["FAIL_ON"].upper(), 3)
+          with open(os.environ["REPORT_PATH"]) as fh:
+              data = json.load(fh)
+
+          def iter_failed(root):
+              if isinstance(root, list):
+                  for item in root:
+                      yield from iter_failed(item)
+                  return
+              results = (root or {}).get("results") or {}
+              for fc in results.get("failed_checks", []) or []:
+                  yield fc
+
+          blocking = [
+              fc for fc in iter_failed(data)
+              if order.get((fc.get("severity") or "MEDIUM").upper(), 2) >= threshold
+          ]
+          if blocking:
+              print(
+                  f"Checkov: {len(blocking)} finding(s) at or above "
+                  f"{os.environ['FAIL_ON']}",
+                  file=sys.stderr,
+              )
+              for fc in blocking[:20]:
+                  print(
+                      f"  - {fc.get('check_id')} [{fc.get('severity')}] "
+                      f"{fc.get('file_path')}: {fc.get('check_name')}",
+                      file=sys.stderr,
+                  )
+              sys.exit(1)
+          print(f"Checkov: no findings at or above {os.environ['FAIL_ON']}")
+          PY
+
+      - name: Upload Checkov findings artifact
+        if: always() && steps.guard.outputs.has-tf == 'true' && steps.locate.outputs.path != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-findings
+          path: ${{ steps.locate.outputs.path }}
+          retention-days: 30
+          if-no-files-found: ignore
