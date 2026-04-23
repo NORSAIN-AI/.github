@@ -82,4 +82,8 @@ secrets.*
 # Ignore org-level policy artifacts
 *.policy.json
 
+# Claude Code / MPM (local framework state; not for org-level repo)
+.claude/
+.claude-mpm/
+
 # End of .gitignore
