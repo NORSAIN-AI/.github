@@ -88,3 +88,7 @@ When guidance conflicts: follow the stricter rule and call out the conflict. Ord
 2. `AGENTS.md` (coding-agent working agreement)
 3. `.github/copilot-instructions.md` (repo-wide chat guidance)
 4. `.github/instructions/**/*.instructions.md` (path-scoped)
+
+## Documentation Handoff
+
+All non-exception documentation goes to `~/code/docs/` via the handoff protocol. See `.claude-mpm/DOC_HANDOFF.md` and the global rule in `~/.claude/CLAUDE.md` -> "Cross-Repo Documentation Handoff Policy".
