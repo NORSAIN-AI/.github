@@ -85,7 +85,7 @@ Single source of truth for the security/test strategy rollout. Cross-references 
 Order per plan (IaC repos last due to Checkov readiness):
 
 - [ ] `memory-federator` — caller PR
-- [ ] `infra-mcp-gateway` — caller PR
+- [ ] `mcp-gateway` — caller PR
 - [ ] `growth` — caller PR
 - [ ] `farloft` — caller PR (Terraform-heavy)
 - [ ] `infra-platform` — caller PR (Terraform-only)
